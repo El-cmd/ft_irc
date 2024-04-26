@@ -34,6 +34,8 @@
 - **Utilisez Wireshark / un proxy personnalisé etc… pour inspecter la communication entre votre serveur de référence (ou votre serveur) et votre client.**
 
 
+- **Source: `https://ircgod.com/`**
+
 
 
 
