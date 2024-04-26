@@ -1,5 +1,7 @@
 #include "../include/server.hpp"
 
+
+/* +++ Coplien Form +++ */
 Server::Server()
 {
 	std::cout << VERT << "Default constructor are called" << REINIT << std::endl;
@@ -10,6 +12,14 @@ Server::~Server()
 	std::cout << ROUGE << "ircserv off" << REINIT << std::endl;
 }
 
+Server::Server(char *port, char *pass)
+{
+	SecurArg(port, pass);
+}
+
+/* ++++++++++++++++++++++++ */
+
+
 /* +++ Securise les arg +++ */
 
 void Server::SecurArg(char *port, char *pass)
@@ -19,8 +29,6 @@ void Server::SecurArg(char *port, char *pass)
 	std::string sPass = pass;
 	if (sPort.empty() || sPass.empty())
 		throw std::invalid_argument("The arguments are empty");
-	// if (sPort > "2147483647")
-		// throw std::invalid_argument("Conection port invalid");
 	while (port[i])
 	{
 		if (!isdigit(port[i]))
@@ -39,9 +47,4 @@ void Server::SecurArg(char *port, char *pass)
 }
 
 /* ++++++++++++++++++++++++ */
-
-Server::Server(char *port, char *pass)
-{
-	SecurArg(port, pass);
-}
 
