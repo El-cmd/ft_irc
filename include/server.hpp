@@ -18,12 +18,18 @@ class Server
 		Server(const Server &other);
 	/* + + + + + + + + + + + */
 
+	/* +++ Init_socket +++ */
+		void initSock();
+	/* + + + + + + + + + + + */
+
 	/* +++ Verif Arguments +++ */
 		void SecurArg(const char *port, const char *pass);
 	/* + + + + + + + + + + + */
 
+		int	_sockFdToListen;
 		int _port;
 		std::string _pass;
+		struct sockaddr_in socket_adress;
 
 };
 

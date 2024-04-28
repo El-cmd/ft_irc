@@ -25,7 +25,8 @@
 #define BLANC "\033[37m"
 
 
-
+/* +++ Global +++ */
 extern bool _state;
+
 
 #endif

@@ -49,13 +49,44 @@ void Server::SecurArg(const char *port, const char *pass)
 
 /* ++++++++++++++++++++++++ */
 
+
+/* +++ Init le socket original ;) +++ */
+
+// !!!!!! Fonction un peu brouillon a modifier selon !!!!!!
+
+void Server::initSock()
+{
+	this->_sockFdToListen = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->_sockFdToListen == -1)
+		throw std::runtime_error("(SERVER) echec d'initialisation du socket");
+	this->socket_adress.sin_family = AF_INET;
+	this->socket_adress.sin_port = htons(this->_port);
+	this->socket_adress.sin_addr.s_addr = INADDR_ANY;
+	int socketAdresslenght = sizeof(this->socket_adress);
+	int bind_adress = bind(this->_sockFdToListen, (struct sockaddr*) &this->socket_adress, socketAdresslenght);
+	if (bind_adress == -1)
+		throw std::runtime_error("(SERVER) echec de liaison au socket");
+	if (listen(this->_sockFdToListen, 1) == -1)
+		throw std::runtime_error("(SERVER) echec de l'ecoute des connexion entrante\n");
+}
+
+/* ++++++++++++++++++++++++ */
+
 /* +++ SERV RUN  +++ */
 
+
+// !!!!!! Fonction un peu brouillon a modifier selon !!!!!!
 void Server::Run()
 {
+	initSock();
+	socklen_t addrlen = sizeof(this->socket_adress);
+	int connectedSockFd = accept(this->_sockFdToListen, (struct sockaddr*) &this->socket_adress, (socklen_t *) &addrlen);
+	if (connectedSockFd == -1)
+		throw std::runtime_error("(SERVER) Echec d'etablissement de la conexion");
+	std::cout << VERT << "SERVEUR CONNECTED AU CLIENT IRSSI" << REINIT << std::endl;
 	while (_state)
 	{
-		;
+
 	}
 }
 
