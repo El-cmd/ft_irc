@@ -7,6 +7,7 @@ int main(int ac, char **av)
 		if (ac == 3)
 		{
 			Server Serv(av[1], av[2]);
+			Serv.Run();
 		}
 		else
 			throw std::invalid_argument("The ircserv needs port and password for get ready");

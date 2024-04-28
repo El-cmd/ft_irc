@@ -8,6 +8,7 @@ class Server
 	public:
 		~Server();
 		Server(char *port, char *pass);
+		void Run();
 
 	private:
 
@@ -17,10 +18,15 @@ class Server
 		Server(const Server &other);
 	/* + + + + + + + + + + + */
 
-	/* +++ Verif Argument +++ */
-		void SecurArg(char *port, char *pass);
+	/* +++ Verif Arguments +++ */
+		void SecurArg(const char *port, const char *pass);
 	/* + + + + + + + + + + + */
 
+	/* +++ Handle_signal +++ */
+		static void handle_sigInt(int sig);
+	/* + + + + + + + + + + + */
+
+		bool _state;
 		int _port;
 		std::string _pass;
 

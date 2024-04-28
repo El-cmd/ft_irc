@@ -2,6 +2,7 @@
 	#define IRC_HPP
 
 #include <iostream>
+#include <csignal>
 #include <string>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -22,6 +23,10 @@
 #define MAGENTA "\033[35m"
 #define CYAN "\033[36m"
 #define BLANC "\033[37m"
+
+
+
+
 
 
 #endif
