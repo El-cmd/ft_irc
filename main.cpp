@@ -1,5 +1,7 @@
 #include "include/irc.hpp"
 
+bool _state = true;
+
 void handle_sigInt(int sig)
 {
 	(void)sig;

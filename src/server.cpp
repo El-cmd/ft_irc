@@ -1,5 +1,6 @@
 #include "../include/server.hpp"
 
+
 /* +++ Coplien Form +++ */
 Server::Server()
 {
@@ -15,10 +16,10 @@ Server::~Server()
 Server::Server(char *port, char *pass)
 {
 	SecurArg(port, pass);
-	_state = true;
 }
 
 /* ++++++++++++++++++++++++ */
+
 
 /* +++ Securise les args +++ */
 
