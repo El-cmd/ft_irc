@@ -22,11 +22,6 @@ class Server
 		void SecurArg(const char *port, const char *pass);
 	/* + + + + + + + + + + + */
 
-	/* +++ Handle_signal +++ */
-		static void handle_sigInt(int sig);
-	/* + + + + + + + + + + + */
-
-		bool _state;
 		int _port;
 		std::string _pass;
 

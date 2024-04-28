@@ -1,6 +1,5 @@
 #include "../include/server.hpp"
 
-
 /* +++ Coplien Form +++ */
 Server::Server()
 {
@@ -9,18 +8,17 @@ Server::Server()
 
 Server::~Server()
 {
-	this->_state = false;
+	_state = false;
 	std::cout << ROUGE << "ircserv off" << REINIT << std::endl;
 }
 
 Server::Server(char *port, char *pass)
 {
 	SecurArg(port, pass);
-	this->_state = true;
+	_state = true;
 }
 
 /* ++++++++++++++++++++++++ */
-
 
 /* +++ Securise les args +++ */
 
@@ -50,20 +48,11 @@ void Server::SecurArg(const char *port, const char *pass)
 
 /* ++++++++++++++++++++++++ */
 
-/* +++ Handle_signal +++ */
-void Server::handle_sigInt(int sig)
-{
-	std::cout << ROUGE << "ircserv off" << REINIT << std::endl;
-	exit(sig);
-}
-/* ++++++++++++++++++++++++ */
-
 /* +++ SERV RUN  +++ */
 
 void Server::Run()
 {
-	signal(SIGINT, handle_sigInt);
-	while (this->_state)
+	while (_state)
 	{
 		;
 	}

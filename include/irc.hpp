@@ -26,7 +26,6 @@
 
 
 
-
-
+extern bool _state;
 
 #endif

@@ -1,7 +1,14 @@
 #include "include/irc.hpp"
 
+void handle_sigInt(int sig)
+{
+	(void)sig;
+	_state = false;
+}
+
 int main(int ac, char **av)
 {
+	signal(SIGINT, handle_sigInt);
 	try
 	{
 		if (ac == 3)

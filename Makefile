@@ -11,7 +11,7 @@ OBJ = $(SRC:.cpp=.o)
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-		  $(CC) $(OBJ) -o $(NAME)
+		  $(CC) $(OBJ) -o $(NAME) -g
 		  @printf "\e[92;5;118m\n>>> Executable ready\n\e[0m"
 
 %.o : %.cpp
