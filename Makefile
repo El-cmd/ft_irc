@@ -3,7 +3,8 @@ FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = ircserv
 
 SRC = main.cpp \
-	  src/server.cpp
+	  src/server.cpp \
+	  src/client.cpp
 
 RM = rm -rf
 OBJ = $(SRC:.cpp=.o)

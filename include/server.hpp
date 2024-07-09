@@ -22,10 +22,15 @@ class Server
 		void initSock();
 	/* + + + + + + + + + + + */
 
+
+	/* +++ POLL +++ */
+		void initPoll();
+	/* + + + + + + + + + + + */
+
 	/* +++ Verif Arguments +++ */
 		void SecurArg(const char *port, const char *pass);
 	/* + + + + + + + + + + + */
-
+		srd::vector<pollfd> _pfd;
 		int	_sockFdToListen;
 		int _port;
 		std::string _pass;

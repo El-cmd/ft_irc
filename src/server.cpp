@@ -72,23 +72,33 @@ void Server::initSock()
 
 /* ++++++++++++++++++++++++ */
 
+/* +++ POLL +++ */
+void Server::initPoll()
+{
+	pollfd pfd = {this->_sockFdToListen, POLLIN, 0};
+	this->_pfd.push_back(pfd);
+}
+/* ++++++++++++++++++++++++ */
+
 /* +++ SERV RUN  +++ */
-
-
 // !!!!!! Fonction un peu brouillon a modifier selon !!!!!!
 void Server::Run()
 {
 	initSock();
-	socklen_t addrlen = sizeof(this->socket_adress);
-	int connectedSockFd = accept(this->_sockFdToListen, (struct sockaddr*) &this->socket_adress, (socklen_t *) &addrlen);
-	if (connectedSockFd == -1)
-		throw std::runtime_error("(SERVER) Echec d'etablissement de la conexion");
+	initPoll();
+	//socklen_t addrlen = sizeof(this->socket_adress);
+	//int connectedSockFd = accept(this->_sockFdToListen, (struct sockaddr*) &this->socket_adress, (socklen_t *) &addrlen);
+	//if (connectedSockFd == -1)
+	//	throw std::runtime_error("(SERVER) Echec d'etablissement de la conexion");
 	std::cout << VERT << "SERVEUR CONNECTED AU CLIENT IRSSI" << REINIT << std::endl;
 	while (_state)
 	{
-
+		if (poll(this->_psfd.begin().base(), _pfd.size(), -1) < 0)
+			throw std::runtime_error("Error: polling intit");
+		
 	}
 }
 
 /* ++++++++++++++++++++++++ */
+
 

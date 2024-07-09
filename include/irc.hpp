@@ -6,9 +6,12 @@
 #include <string>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/poll.h>
+#include <poll.h>
 #include <exception>
 #include <arpa/inet.h>
 #include <limits.h>
+#include <vector>
 #include <unistd.h>
 #include <cstdlib> //pour atoi()
 #include "server.hpp"
