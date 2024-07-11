@@ -5,6 +5,9 @@
 
 class Server
 {
+	typedef std::vector<pollfd>::iterator _itpfd;
+
+
 	public:
 		~Server();
 		Server(char *port, char *pass);
@@ -25,12 +28,16 @@ class Server
 
 	/* +++ POLL +++ */
 		void initPoll();
+		void client_connection();
 	/* + + + + + + + + + + + */
 
 	/* +++ Verif Arguments +++ */
 		void SecurArg(const char *port, const char *pass);
 	/* + + + + + + + + + + + */
-		srd::vector<pollfd> _pfd;
+
+	/* +++ variables +++ */
+		std::vector<struct pollfd> _pfd;
+		std::map<int, client *> _clients;
 		int	_sockFdToListen;
 		int _port;
 		std::string _pass;

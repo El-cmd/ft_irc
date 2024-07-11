@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/poll.h>
 #include <poll.h>
+#include <map>
 #include <exception>
 #include <arpa/inet.h>
 #include <limits.h>
@@ -15,6 +16,7 @@
 #include <unistd.h>
 #include <cstdlib> //pour atoi()
 #include "server.hpp"
+#include "client.hpp"
 
 /* +++ COLORS +++ */
 #define REINIT "\033[0m"
