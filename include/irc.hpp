@@ -1,9 +1,13 @@
 #ifndef IRC_HPP
 	#define IRC_HPP
 
+#include <fstream>
+#include <ctime>
+#include <sstream>
 #include <iostream>
 #include <csignal>
 #include <string>
+#include <string.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/poll.h>
@@ -15,6 +19,10 @@
 #include <vector>
 #include <unistd.h>
 #include <cstdlib> //pour atoi()
+
+class client;
+class Server;
+#include "log.hpp"
 #include "server.hpp"
 #include "client.hpp"
 
@@ -30,8 +38,8 @@
 #define BLANC "\033[37m"
 
 
+
 /* +++ Global +++ */
 extern bool _state;
-
 
 #endif

@@ -93,19 +93,51 @@ void Server::initPoll()
 	this->_pfd.push_back(pfd);
 }
 
-void Server::client_connection()
-{
-	socklen_t addrlen = sizeof(this->socket_adress);
-	int connectedSockFd = accept(this->_sockFdToListen, (struct sockaddr*) &this->socket_adress, (socklen_t *) &addrlen);
-	if (connectedSockFd == -1)
-		throw std::runtime_error("(SERVER) Echec d'etablissement de la conexion");
-	pollfd pfd = {connectedSockFd, POLLIN, 0};
-	this->_pfd.push_back(pfd);
-	client *Nclient = new client(connectedSockFd);
-	this->_clients.insert(std::make_pair(connectedSockFd, Nclient));
+void Server::client_connection() {
+    // Définit la taille de la structure d'adresse du socket.
+    socklen_t addrlen = sizeof(this->socket_adress);
+
+    // Attend une connexion sur le socket d'écoute (_sockFdToListen).
+    // accept() bloque le processus jusqu'à ce qu'un client se connecte.
+    // Il retourne un nouveau descripteur de fichier (socket) pour cette connexion.
+    int connectedSockFd = accept(this->_sockFdToListen, (struct sockaddr*) &this->socket_adress, &addrlen);
+
+    // Si accept() retourne -1, cela signifie qu'une erreur a eu lieu lors de la tentative de connexion.
+    if (connectedSockFd == -1)
+        throw std::runtime_error("(SERVER) Echec d'etablissement de la conexion");
+
+    // Prépare un struct pollfd pour utiliser avec poll().
+    // POLLIN indique que nous attendons des données en lecture sur ce socket.
+    pollfd pfd = {connectedSockFd, POLLIN, 0};
+
+    // Ajoute ce nouveau pollfd au vecteur de pollfd géré par le serveur.
+    this->_pfd.push_back(pfd);
+
+    // Crée un nouvel objet client qui encapsule le descripteur de fichier du socket connecté.
+    // Supposons que 'client' est une classe qui gère la communication avec un client connecté.
+    client *Nclient = new client(connectedSockFd);
+
+    // Ajoute le nouveau client à la map des clients avec son descripteur de fichier comme clé.
+    // std::make_pair est utilisé pour créer la paire qui sera insérée dans la map.
+    this->_clients.insert(std::make_pair(connectedSockFd, Nclient));
+	log_message("client connecté");
 }
+
 /* ++++++++++++++++++++++++ */
 
+/* +++ Handle Message +++ */
+
+void Server::handle_client_message(int fd)
+{
+	char buffer[512];
+	memset(buffer, 0, sizeof(buffer));
+	int bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	if (bytes_received < 0)
+		return ;
+	buffer[bytes_received] = '\0';
+	std::cout << buffer;
+}
+/* ++++++++++++++++++++++++ */
 
 /* +++ SERV RUN  +++ */
 // Méthode principale de l'exécution du serveur
@@ -125,19 +157,22 @@ void Server::Run()
 		{
 			if (tmp->revents == 0)
 				continue ;
-
 			// Gestion de l'événement POLLHUP (fermeture de connexion)
 			if ((tmp->revents & POLLHUP) == POLLHUP)
 			{
 				break ;
 			}
-
 			// Gestion de l'événement POLLIN (données disponibles en lecture)
 			if ((tmp->revents & POLLIN) == POLLIN)
 			{
-				client_connection();
-				break ;
+				if (tmp->fd == this->_sockFdToListen)
+				{
+					client_connection();
+					break ;
+				}
+				handle_client_message(tmp->fd);
 			}
+
 		}
 	}
 }

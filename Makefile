@@ -4,7 +4,8 @@ NAME = ircserv
 
 SRC = main.cpp \
 	  src/server.cpp \
-	  src/client.cpp
+	  src/client.cpp \
+	  src/log.cpp
 
 RM = rm -rf
 OBJ = $(SRC:.cpp=.o)

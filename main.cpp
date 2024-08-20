@@ -10,9 +10,9 @@ void handle_sigInt(int sig)
 
 int main(int ac, char **av)
 {
-	signal(SIGINT, handle_sigInt);
 	try
 	{
+		signal(SIGINT, handle_sigInt);
 		if (ac == 3)
 		{
 			Server Serv(av[1], av[2]);

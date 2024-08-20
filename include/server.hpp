@@ -35,6 +35,10 @@ class Server
 		void SecurArg(const char *port, const char *pass);
 	/* + + + + + + + + + + + */
 
+	/* +++ Evenement POLLIN +++ */
+;
+		void handle_client_message(int fd);
+
 	/* +++ variables +++ */
 		std::vector<struct pollfd> _pfd;
 		std::map<int, client *> _clients;

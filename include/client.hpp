@@ -1,7 +1,7 @@
 #ifndef CLIENT_HPP
 	#define CLIENT_HPP
 
-#include "../include/irc.hpp"
+#include "irc.hpp"
 
 class client 
 {
@@ -18,6 +18,12 @@ class client
 
     /* +++ variable +++ */
     int _fd;
+
+    //Pour la connection au seveur
+    bool _auth;
+    std::string _nick;
+    std::string _username;
+    std::string _realname;
     /* + + + + + + + + + + + */
 };
 
