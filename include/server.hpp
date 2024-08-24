@@ -25,10 +25,8 @@ class Server
 		void initSock();
 	/* + + + + + + + + + + + */
 
-
 	/* +++ POLL +++ */
 		void initPoll();
-		void client_connection();
 	/* + + + + + + + + + + + */
 
 	/* +++ Verif Arguments +++ */
@@ -36,9 +34,10 @@ class Server
 	/* + + + + + + + + + + + */
 
 	/* +++ Evenement POLLIN +++ */
-;
 		void handle_client_message(int fd);
-
+		void client_connection();
+	/* + + + + + + + + + + + */
+	
 	/* +++ variables +++ */
 		std::vector<struct pollfd> _pfd;
 		std::map<int, client *> _clients;
@@ -46,7 +45,7 @@ class Server
 		int _port;
 		std::string _pass;
 		struct sockaddr_in socket_adress;
-
+	/* + + + + + + + + + + + */
 };
 
 #endif

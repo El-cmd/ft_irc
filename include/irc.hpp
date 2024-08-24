@@ -22,7 +22,8 @@
 
 class client;
 class Server;
-#include "log.hpp"
+#include "Command.hpp"
+#include "utils.hpp"
 #include "server.hpp"
 #include "client.hpp"
 

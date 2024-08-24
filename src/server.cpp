@@ -53,7 +53,8 @@ void Server::SecurArg(const char *port, const char *pass)
 	// Assignation des valeurs sécurisées
 	this->_port = tmp;
 	this->_pass = sPass;
-	std::cout << VERT << "ircserv on" << REINIT << std::endl;
+	log_message("Server started");
+	//std::cout << VERT << "ircserv on" << REINIT << std::endl;
 }
 /* ++++++++++++++++++++++++ */
 
@@ -120,8 +121,9 @@ void Server::client_connection() {
     // Ajoute le nouveau client à la map des clients avec son descripteur de fichier comme clé.
     // std::make_pair est utilisé pour créer la paire qui sera insérée dans la map.
     this->_clients.insert(std::make_pair(connectedSockFd, Nclient));
-	log_message("client connecté");
+	log_message("Client from " + Nclient->getIp() + " connected but not authenticate");
 }
+
 
 /* ++++++++++++++++++++++++ */
 
@@ -134,8 +136,15 @@ void Server::handle_client_message(int fd)
 	int bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytes_received < 0)
 		return ;
+	else if (bytes_received == 0)
+	{
+		close(fd);
+		return ;
+	}
 	buffer[bytes_received] = '\0';
-	std::cout << buffer;
+	std::vector<std::string> super = parse_message(buffer);
+	std::map<int, client *>::iterator it = _clients.find(fd);
+	command test(super, it->second);
 }
 /* ++++++++++++++++++++++++ */
 
@@ -172,11 +181,7 @@ void Server::Run()
 				}
 				handle_client_message(tmp->fd);
 			}
-
 		}
 	}
 }
 /* ++++++++++++++++++++++++ */
-
-
-
