@@ -12,9 +12,9 @@ class Server
 		~Server();
 		Server(char *port, char *pass);
 		void Run();
-
+		bool auth(const std::string &Pass);
 	private:
-
+	
 	/* +++ Coplian Form +++ */
 		Server();
 		Server &operator=(const Server &other);

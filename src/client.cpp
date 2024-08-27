@@ -74,4 +74,9 @@ void client::setRealname(std::string str)
 {
     this->_realname = str;
 }
+
+void client::setAuth()
+{
+    this->_auth = true;
+}
 /* ++++++++++++++++++++++++++++++ */

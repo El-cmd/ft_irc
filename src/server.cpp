@@ -126,6 +126,17 @@ void Server::client_connection() {
 
 
 /* ++++++++++++++++++++++++ */
+/* +++ Pass +++ */
+
+bool Server::auth(const std::string &Pass)
+{
+	if (this->_pass == Pass)
+		return true;
+	log_message("Bad Password");
+	return false;
+}
+
+/* ++++++++++++++++++++++++ */
 
 /* +++ Handle Message +++ */
 
@@ -142,9 +153,9 @@ void Server::handle_client_message(int fd)
 		return ;
 	}
 	buffer[bytes_received] = '\0';
-	std::vector<std::string> super = parse_message(buffer);
 	std::map<int, client *>::iterator it = _clients.find(fd);
-	command test(super, it->second);
+	Command command;
+	command.execute(buffer, it->second, this);
 }
 /* ++++++++++++++++++++++++ */
 

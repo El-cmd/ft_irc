@@ -36,7 +36,7 @@ std::string trim_all(const std::string& str)
     return result;
 }
 
-std::vector<std::string> parse_message(const std::string &message) {
+std::vector<std::string> parse_command(const std::string &message) {
     std::vector<std::string> parts;
     std::istringstream stream(message);
     std::string part;

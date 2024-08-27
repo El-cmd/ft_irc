@@ -22,6 +22,7 @@ class client
     void setNick(std::string str);
     void setUsername(std::string str);
     void setRealname(std::string str);
+    void setAuth();
     /* + + + + + + + + + + + */
     private:
 
