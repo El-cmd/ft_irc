@@ -132,7 +132,6 @@ bool Server::auth(const std::string &Pass)
 {
 	if (this->_pass == Pass)
 		return true;
-	log_message("Bad Password");
 	return false;
 }
 

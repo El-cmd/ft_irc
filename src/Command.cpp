@@ -25,7 +25,7 @@ void Command::execute(const std::string &command, client *sender, Server *tmp)
         (this->*handler)(parts, sender, tmp);
     } 
     else
-        std::cout << "Commande inconnue: " << cmd_name << std::endl;
+        log_message_client(sender->getFd(), "Commande inconnue: " + cmd_name);
 }
 
 void Command::User(const std::vector<std::string> &params, client *sender, Server *tmp)
@@ -38,24 +38,30 @@ void Command::User(const std::vector<std::string> &params, client *sender, Serve
     }
     else
     {
-        log_message("Commande inconnue: Pas assez d'arguments");
+        log_message_client(sender->getFd(), "Commande inconnue: Pas assez d'arguments");
         return ;
     }
     if (sender->getAuth() && !sender->getRealname().empty() && !sender->getUser().empty() && !sender->getNick().empty())
+    {
         log_message(sender->getNick() + " is authentified");
+        log_message_client(sender->getFd(), sender->getNick() + " is authentified");
+    }
 }
 
 void Command::Pass(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     if (params.size() != 1)
     {
-        log_message("Commande inconnue: Pas assez d'arguments");
+        log_message_client(sender->getFd(), " Commande inconnue: Pas assez d'arguments");
         return ;
     }
     if (tmp->auth(params[0]))
         sender->setAuth();
     if (sender->getAuth() && !sender->getRealname().empty() && !sender->getUser().empty() && !sender->getNick().empty())
+    {
         log_message(sender->getNick() + " is authentified");
+        log_message_client(sender->getFd(), sender->getNick() + " is authentified");
+    }
 }
 
 void Command::Nick(const std::vector<std::string> &params, client *sender, Server *tmp)
@@ -63,10 +69,14 @@ void Command::Nick(const std::vector<std::string> &params, client *sender, Serve
     (void) tmp;
     if (params.size() != 1)
     {
-        log_message("Commande inconnue: Pas assez d'arguments");
+        log_message_client(sender->getFd(), "Commande inconnue: Pas assez d'arguments");
         return; //message d'erreur;
     }
     sender->setNick(params[0]);
+    log_message_client(sender->getFd(), sender->getNick() + " is your new nickname.");
     if (sender->getAuth() && !sender->getRealname().empty() && !sender->getUser().empty() && !sender->getNick().empty())
+    {
         log_message(sender->getNick() + " is authentified");
+        log_message_client(sender->getFd(), sender->getNick() + " is authentified");
+    }
 }
