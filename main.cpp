@@ -20,7 +20,6 @@ int main(int ac, char **av)
 		}
 		else
 			throw std::invalid_argument("The ircserv needs port and password for get ready");
-
 	}
 	catch (const std::exception& e)
 	{

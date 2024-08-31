@@ -11,10 +11,14 @@ public:
     void execute(const std::string &command, client *sender, Server *);
 
 private:
+
+/* +++ Commandes +++ */
     void User(const std::vector<std::string> &params, client *sender, Server *tmp);
     void Pass(const std::vector<std::string> &params, client *sender, Server *tmp);
-    //void Join(const std::vector<std::string> &params, client *sender);
+    void Join(const std::vector<std::string> &params, client *sender, Server *tmp);
     void Nick(const std::vector<std::string> &params, client *sender, Server *tmp);
+    void Topic(const std::vector<std::string> &params, client *sender, Server *tmp);
+/* +++++++++++++++++ */
     ////void Privmsg(const std::vector<std::string> &params, client *sender);
     //// Ajoutez d'autres commandes ici
 

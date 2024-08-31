@@ -6,7 +6,8 @@ SRC = main.cpp \
 	  src/server.cpp \
 	  src/client.cpp \
 	  src/utils.cpp \
-	  src/Command.cpp
+	  src/Command.cpp \
+	  src/Channel.cpp
 
 RM = rm -rf
 OBJ = $(SRC:.cpp=.o)

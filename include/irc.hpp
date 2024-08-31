@@ -22,6 +22,8 @@
 
 class client;
 class Server;
+class Channel;
+#include "Channel.hpp"
 #include "Command.hpp"
 #include "utils.hpp"
 #include "server.hpp"

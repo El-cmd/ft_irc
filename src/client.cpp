@@ -22,6 +22,12 @@ client::client()
 {}
 
 /* +++ Getter +++ */
+
+std::vector<Channel *> client::getChan()
+{
+    return this->_channels;
+}
+
 int client::getPort()
 {
     return this->_client_port;

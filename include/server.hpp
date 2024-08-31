@@ -13,8 +13,15 @@ class Server
 		Server(char *port, char *pass);
 		void Run();
 		bool auth(const std::string &Pass);
+
+	/* +++ Gerer les channels +++ */
+		void newChannel(Channel *chan);
+		bool channelAlreadyExist(std::string name);
+		bool chanNeedPswd(std::string name);
+		Channel *findChan(std::string name);
+	/* + + + + + + + + + + + */
 	private:
-	
+
 	/* +++ Coplian Form +++ */
 		Server();
 		Server &operator=(const Server &other);
@@ -45,6 +52,7 @@ class Server
 		int _port;
 		std::string _pass;
 		struct sockaddr_in socket_adress;
+		std::vector<Channel *> _channels;
 	/* + + + + + + + + + + + */
 };
 

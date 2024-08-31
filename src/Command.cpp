@@ -5,6 +5,7 @@ Command::Command()
     _commands["NICK"] = &Command::Nick;
     _commands["PASS"] = &Command::Pass;
     _commands["USER"] = &Command::User;
+    _commands["TOPIC"] = &Command::Topic;
 }
 
 Command::~Command()
@@ -28,6 +29,7 @@ void Command::execute(const std::string &command, client *sender, Server *tmp)
         log_message_client(sender->getFd(), "Commande inconnue: " + cmd_name);
 }
 
+/* +++ Les commandes IRC +++ */
 void Command::User(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     (void) tmp;
@@ -80,3 +82,38 @@ void Command::Nick(const std::vector<std::string> &params, client *sender, Serve
         log_message_client(sender->getFd(), sender->getNick() + " is authentified");
     }
 }
+
+void Command::Join(const std::vector<std::string> &params, client *sender, Server *tmp)
+{
+    std::vector<std::string>::const_iterator it = params.begin();
+    if (params.empty())
+        return ; // message d'erreur
+    Channel *chan;
+    while (it != params.end())
+    {
+        if (!tmp->channelAlreadyExist(*it))
+        {
+            chan = new Channel(*it, sender, tmp);
+            it++;
+            break;
+        }
+        else
+            chan = tmp->findChan(*it);
+        if (tmp->channelAlreadyExist(*it) && !chan->withKey())
+            chan->addClient(sender);
+        //rajouter pour les channel avec des mdp
+        it++;
+    }
+}
+
+void Topic(const std::vector<std::string> &params, client *sender, Server *tmp)
+{
+    if (params.empty())
+        return ;
+    if (!tmp->channelAlreadyExist(params[0]))
+    {
+        log_message_client(sender->getFd())
+    }
+}
+
+/* +++++++++++++++++++++++++++++ */

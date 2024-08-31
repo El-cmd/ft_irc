@@ -137,6 +137,51 @@ bool Server::auth(const std::string &Pass)
 
 /* ++++++++++++++++++++++++ */
 
+/* +++ Gerer les channels  +++ */
+
+void Server::newChannel(Channel *chan)
+{
+	this->_channels.push_back(chan);
+}
+
+bool Server::channelAlreadyExist(std::string name)
+{
+	std::vector<Channel *>::iterator it = this->_channels.begin();
+	while (it != this->_channels.end())
+	{
+		if ((*it)->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
+}
+
+bool Server::chanNeedPswd(std::string name)
+{
+	std::vector<Channel *>::iterator it = this->_channels.begin();
+	while (it != this->_channels.end())
+	{
+		if ((*it)->getName() == name)
+			return (*it)->withKey();
+		it++;
+	}
+	return false;
+}
+
+Channel *Server::findChan(std::string name)
+{
+	std::vector<Channel *>::iterator it = this->_channels.begin();
+	while (it != this->_channels.end())
+	{
+		if ((*it)->getName() == name)
+			return *it;
+		it++;
+	}
+	return NULL;
+}
+
+/* ++++++++++++++++++++++++ */
+
 /* +++ Handle Message +++ */
 
 void Server::handle_client_message(int fd)
