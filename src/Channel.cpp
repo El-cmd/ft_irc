@@ -28,6 +28,21 @@ bool Channel::withKey()
     return this->_whithKey;
 }
 
+std::string Channel::getTopic()
+{
+    return this->_topic;
+}
+
+/* +++++++++++++++ */
+
+/* +++ Setter +++ */
+
+void Channel::setTopic(std::string &topic)
+{
+    this->_topic = topic;
+    return ;
+}
+
 /* +++++++++++++++ */
 
 bool Channel::alreadyIn(client *sender)
@@ -37,10 +52,7 @@ bool Channel::alreadyIn(client *sender)
     while (it != this->_clients.end())
     {
         if (it->first == i)
-        {
-            log_message_client(i, "You are already in " + this->getName() + " Channel");
             return true;
-        }
         it++;
     }
     return false;
@@ -49,7 +61,10 @@ bool Channel::alreadyIn(client *sender)
 void Channel::addClient(client *sender)
 {
     if (alreadyIn(sender))
+    {
+        log_message_client(sender->getFd(), "You are already in " + this->getName() + " Channel");
         return ;
+    }
     this->_clients.insert(std::make_pair(sender->getFd(), sender));
     log_message_client(sender->getFd(), "You joined " + this->getName() + " Channel");
     log_message(sender->getNick() + " joined the " + this->getName() + " Channel");

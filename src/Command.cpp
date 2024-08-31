@@ -6,6 +6,7 @@ Command::Command()
     _commands["PASS"] = &Command::Pass;
     _commands["USER"] = &Command::User;
     _commands["TOPIC"] = &Command::Topic;
+    _commands["JOIN"] = &Command::Join;
 }
 
 Command::~Command()
@@ -106,13 +107,39 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
     }
 }
 
-void Topic(const std::vector<std::string> &params, client *sender, Server *tmp)
+void Command::Topic(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    Channel *chan;
     if (params.empty())
         return ;
     if (!tmp->channelAlreadyExist(params[0]))
     {
-        log_message_client(sender->getFd())
+        log_message_client(sender->getFd(), "This channel doesn't exist");
+        return ;
+    }
+    else
+    {
+        chan = tmp->findChan(params[0]);
+        if (chan->alreadyIn(sender))
+        {
+            if (params.size() > 1)
+            {
+                std::vector<std::string>::const_iterator it = params.begin();
+                it++;
+                std::string topic;
+                while (it != params.end())
+                {
+                    topic += *it + " ";
+                    it++;
+                }
+                chan->setTopic(topic);
+                log_message_client(sender->getFd(), "You are set a new Topic in " + chan->getName() + " Channel"); 
+            }
+            else
+                log_message_client(sender->getFd(), chan->getTopic());
+        }
+        else
+            log_message_client(sender->getFd(), "you are not authorized to access this channel");
     }
 }
 

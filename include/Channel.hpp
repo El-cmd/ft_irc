@@ -13,6 +13,10 @@ class Channel
     /* +++ Getter +++ */
         std::string getName();
         bool withKey();
+        std::string getTopic();
+    /* ++++++++++++++ */
+    /* +++ Setter +++ */
+        void setTopic(std::string &topic);
     /* ++++++++++++++ */
     private:
         Channel();
