@@ -18,6 +18,7 @@ private:
     void Join(const std::vector<std::string> &params, client *sender, Server *tmp);
     void Nick(const std::vector<std::string> &params, client *sender, Server *tmp);
     void Topic(const std::vector<std::string> &params, client *sender, Server *tmp);
+    void Mode(const std::vector<std::string> &params, client *sender, Server *tmp);
 /* +++++++++++++++++ */
     ////void Privmsg(const std::vector<std::string> &params, client *sender);
     //// Ajoutez d'autres commandes ici

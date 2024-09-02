@@ -7,6 +7,7 @@ Command::Command()
     _commands["USER"] = &Command::User;
     _commands["TOPIC"] = &Command::Topic;
     _commands["JOIN"] = &Command::Join;
+    _commands["MODE"] = &Command::Mode;
 }
 
 Command::~Command()
@@ -139,8 +140,23 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
                 log_message_client(sender->getFd(), chan->getTopic());
         }
         else
-            log_message_client(sender->getFd(), "you are not authorized to access this channel");
+            log_message_client(sender->getFd(), "You are not authorized to access this channel");
     }
+}
+
+void Command::Mode(const std::vector<std::string> &params, client *sender, Server *tmp)
+{
+    if (params.size() < 2)
+        return ; //message d'erreur
+    if (!tmp->channelAlreadyExist(params[0]))
+        return ;
+    Channel *chan = tmp->findChan(params[0]);
+    if (chan->alreadyIn(sender))
+    {
+        
+    }
+    else
+        log_message_client(sender->getFd(), "You are not authorized to access this channel");
 }
 
 /* +++++++++++++++++++++++++++++ */
