@@ -65,3 +65,29 @@ std::vector<std::string> parse_command(const std::string &message) {
 
     return parts;
 }
+
+bool verifOptionMode(std::string param)
+{
+    int i = 0;
+    if (param[0] != '+' && param[0] != '-')
+        return false;
+    while (param[i])
+    {
+        if (param[i] != '+' && param[i] != '-' && param[i] != 'i' && param[i] != 't' && param[i] != 'k' && param[i] != 'o' && param[i] != 'l')
+            return false;
+        i++;
+    }
+    return true;
+}
+
+std::stack<char> initQueue(std::string param)
+{
+    int i = param.length() - 1;
+    std::stack<char> _stack;
+    while (i >= 0)
+    {
+        _stack.push(param[i]);
+        i--;
+    }
+    return _stack;
+}

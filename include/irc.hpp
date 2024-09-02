@@ -13,6 +13,7 @@
 #include <sys/poll.h>
 #include <poll.h>
 #include <map>
+#include <stack>
 #include <exception>
 #include <arpa/inet.h>
 #include <limits.h>

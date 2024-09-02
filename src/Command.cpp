@@ -149,11 +149,15 @@ void Command::Mode(const std::vector<std::string> &params, client *sender, Serve
     if (params.size() < 2)
         return ; //message d'erreur
     if (!tmp->channelAlreadyExist(params[0]))
-        return ;
+        return ; // message d'erreur
     Channel *chan = tmp->findChan(params[0]);
     if (chan->alreadyIn(sender))
     {
+        if (!verifOptionMode(params[1]))
+            return ; // message d'erreur
+        std::stack<char> _stack = initQueue(params[1]);
         
+
     }
     else
         log_message_client(sender->getFd(), "You are not authorized to access this channel");
