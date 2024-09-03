@@ -101,9 +101,9 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
         }
         else
             chan = tmp->findChan(*it);
-        if (tmp->channelAlreadyExist(*it) && !chan->withKey())
+        if (tmp->channelAlreadyExist(*it) && !chan->withKey() && !chan->getOnInvite())
             chan->addClient(sender);
-        //rajouter pour les channel avec des mdp
+        //rajouter pour les channel avec des mdp et sur invite
         it++;
     }
 }
@@ -123,7 +123,7 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
         chan = tmp->findChan(params[0]);
         if (chan->alreadyIn(sender))
         {
-            if (params.size() > 1)
+            if (params.size() > 1 && (!chan->getTopicRestricted() || (chan->getTopicRestricted() && chan->itsAnOp(sender))))
             {
                 std::vector<std::string>::const_iterator it = params.begin();
                 it++;
@@ -136,7 +136,7 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
                 chan->setTopic(topic);
                 log_message_client(sender->getFd(), "You are set a new Topic in " + chan->getName() + " Channel"); 
             }
-            else
+            else if (params.size() == 1)
                 log_message_client(sender->getFd(), chan->getTopic());
         }
         else
@@ -144,23 +144,112 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
     }
 }
 
-void Command::Mode(const std::vector<std::string> &params, client *sender, Server *tmp)
-{
-    if (params.size() < 2)
-        return ; //message d'erreur
-    if (!tmp->channelAlreadyExist(params[0]))
-        return ; // message d'erreur
-    Channel *chan = tmp->findChan(params[0]);
-    if (chan->alreadyIn(sender))
-    {
-        if (!verifOptionMode(params[1]))
-            return ; // message d'erreur
-        std::stack<char> _stack = initQueue(params[1]);
-        
-
-    }
-    else
-        log_message_client(sender->getFd(), "You are not authorized to access this channel");
-}
 
 /* +++++++++++++++++++++++++++++ */
+
+
+void Command::Mode(const std::vector<std::string>& params, client* sender, Server* tmp) 
+{
+    // Vérification des paramètres
+    if (params.size() < 2)
+    {
+        log_message_client(sender->getFd(), "Error: Not enough parameters");
+        return;
+    }
+    if (!tmp->channelAlreadyExist(params[0]))
+    {
+        log_message_client(sender->getFd(), "Error: No such channel");
+        return;
+    }
+    Channel* chan = tmp->findChan(params[0]);
+    if (!chan->alreadyIn(sender) && !chan->itsAnOp(sender))
+    {
+        log_message_client(sender->getFd(), "You are not authorized to access this channel");
+        return;
+    }
+    if (!verifOptionMode(params[1]))
+    {
+        log_message_client(sender->getFd(), "Error: Invalid mode option");
+        return;
+    }
+    std::stack<char> modeStack = initQueue(params[1]);
+    bool addMode = true;
+    while (!modeStack.empty())
+    {
+        char mode = modeStack.top();
+        modeStack.pop();
+        if (mode == '+')
+            addMode = true;
+        else if (mode == '-')
+            addMode = false;
+        else
+            applyMode(chan, sender, mode, addMode, params, tmp);
+    }
+}
+
+void Command::applyMode(Channel* chan, client* sender, char mode, bool addMode, const std::vector<std::string>& params, Server* tmp)
+{
+    switch (mode)
+    {
+        case 'i':
+            handleInviteOnlyMode(chan, addMode);
+            break;
+        case 't':
+            handleTopicRestrictionMode(chan, addMode);
+            break;
+        //case 'k':
+        //    handleChannelKeyMode(chan, sender, addMode, params);
+        //    break;
+        //case 'o':
+        //    handleOperatorMode(chan, sender, addMode, params, tmp);
+        //    break;
+        //case 'l':
+        //    handleUserLimitMode(chan, sender, addMode, params);
+        //    break;
+        default:
+            log_message_client(sender->getFd(), "Error: Unknown mode");
+            break;
+    }
+}
+
+void Command::handleInviteOnlyMode(Channel* chan, bool addMode)
+{
+    if (addMode)
+        chan->setInviteOnly(true);
+    else
+        chan->setInviteOnly(false);
+}
+
+void Command::handleTopicRestrictionMode(Channel* chan, bool addMode)
+{
+    if (addMode)
+        chan->setTopicRestricted(true);
+    else
+        chan->setTopicRestricted(false);
+}
+
+//void Command::handleChannelKeyMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params)
+//{
+//    if (addMode)
+//        chan->setKey(params[2]);  // Assurez-vous que params[2] existe
+//    else
+//        chan->clearKey();
+//}
+//
+//void Command::handleOperatorMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params, Server* tmp)
+//{
+//    client* target = tmp->findClient(params[2]);  // Assurez-vous que params[2] existe
+//    if (addMode)
+//        chan->addOperator(target);
+//    else
+//        chan->removeOperator(target);
+//}
+//
+//void Command::handleUserLimitMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params)
+//{
+//    if (addMode)
+//        chan->setUserLimit(atoi(params[2].c_str()));  // Assurez-vous que params[2] existe
+//    else
+//        chan->clearUserLimit();
+//}
+//
