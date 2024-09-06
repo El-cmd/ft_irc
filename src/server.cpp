@@ -58,6 +58,20 @@ void Server::SecurArg(const char *port, const char *pass)
 }
 /* ++++++++++++++++++++++++ */
 
+/* +++ Getter +++ */
+client *Server::findClient(std::string name)
+{
+	std::map<int, client*>::iterator it = _clients.begin();
+	while (it != _clients.end())
+	{
+		if (it->second->getNick() == name)
+			return it->second;
+		it++;
+	}
+	return NULL;
+}
+/* ++++++++++++++++++++++++ */
+
 
 /* +++ Init le socket original +++ */
 // Initialisation du socket
@@ -202,6 +216,7 @@ void Server::handle_client_message(int fd)
 	command.execute(buffer, it->second, this);
 }
 /* ++++++++++++++++++++++++ */
+
 
 /* +++ SERV RUN  +++ */
 // Méthode principale de l'exécution du serveur

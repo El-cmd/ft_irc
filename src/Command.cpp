@@ -174,6 +174,7 @@ void Command::Mode(const std::vector<std::string>& params, client* sender, Serve
     }
     std::stack<char> modeStack = initQueue(params[1]);
     bool addMode = true;
+    int paramIndex = 2;
     while (!modeStack.empty())
     {
         char mode = modeStack.top();
@@ -183,11 +184,11 @@ void Command::Mode(const std::vector<std::string>& params, client* sender, Serve
         else if (mode == '-')
             addMode = false;
         else
-            applyMode(chan, sender, mode, addMode, params, tmp);
+            applyMode(chan, sender, mode, addMode, params, tmp, paramIndex);
     }
 }
 
-void Command::applyMode(Channel* chan, client* sender, char mode, bool addMode, const std::vector<std::string>& params, Server* tmp)
+void Command::applyMode(Channel* chan, client* sender, char mode, bool addMode, const std::vector<std::string>& params, Server* tmp, int& paramIndex)
 {
     switch (mode)
     {
@@ -197,15 +198,15 @@ void Command::applyMode(Channel* chan, client* sender, char mode, bool addMode, 
         case 't':
             handleTopicRestrictionMode(chan, addMode);
             break;
-        //case 'k':
-        //    handleChannelKeyMode(chan, sender, addMode, params);
-        //    break;
-        //case 'o':
-        //    handleOperatorMode(chan, sender, addMode, params, tmp);
-        //    break;
-        //case 'l':
-        //    handleUserLimitMode(chan, sender, addMode, params);
-        //    break;
+        case 'k':
+            handleChannelKeyMode(chan, sender, addMode, params, paramIndex);
+            break;
+        case 'o':
+            handleOperatorMode(chan, sender, addMode, params, tmp, paramIndex);
+            break;
+        case 'l':
+            handleUserLimitMode(chan, sender, addMode, params, paramIndex);
+            break;
         default:
             log_message_client(sender->getFd(), "Error: Unknown mode");
             break;
@@ -228,28 +229,61 @@ void Command::handleTopicRestrictionMode(Channel* chan, bool addMode)
         chan->setTopicRestricted(false);
 }
 
-//void Command::handleChannelKeyMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params)
-//{
-//    if (addMode)
-//        chan->setKey(params[2]);  // Assurez-vous que params[2] existe
-//    else
-//        chan->clearKey();
-//}
-//
-//void Command::handleOperatorMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params, Server* tmp)
-//{
-//    client* target = tmp->findClient(params[2]);  // Assurez-vous que params[2] existe
-//    if (addMode)
-//        chan->addOperator(target);
-//    else
-//        chan->removeOperator(target);
-//}
-//
-//void Command::handleUserLimitMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params)
-//{
-//    if (addMode)
-//        chan->setUserLimit(atoi(params[2].c_str()));  // Assurez-vous que params[2] existe
-//    else
-//        chan->clearUserLimit();
-//}
-//
+void Command::handleChannelKeyMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params, int& paramIndex)
+{
+    if (addMode)
+    {
+        if (static_cast<std::vector<std::string>::size_type>(paramIndex) < params.size())
+        {
+            chan->setKey(params[paramIndex]);
+            ++paramIndex;
+        }
+        else
+            log_message_client(sender->getFd(), "Error: Missing key for +k mode");
+    } 
+    else
+        chan->clearKey();
+}
+
+void Command::handleOperatorMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params, Server* tmp, int& paramIndex)
+{
+    client *target;
+    if (static_cast<std::vector<std::string>::size_type>(paramIndex) < params.size())
+    {
+        target = tmp->findClient(params[paramIndex]);
+        ++paramIndex;
+        if (target == NULL)
+        {
+            log_message_client(sender->getFd(), "Error: Client not found for mode +o/-o");
+            return ;  // Message d'erreur
+        }
+    }
+    else
+    {
+        log_message_client(sender->getFd(), "Error: Missing name for +o/-o mode");
+        return ;
+    }
+    if (addMode)
+        chan->addOperator(target);
+    else
+        chan->removeOperator(target);
+}
+
+void Command::handleUserLimitMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params, int& paramIndex)
+{
+    if (addMode)
+    {
+        if (static_cast<std::vector<std::string>::size_type>(paramIndex) < params.size())
+        {
+            if (isValidNumber(params[paramIndex]))
+                chan->setUserLimit(atoi(params[paramIndex].c_str()));  // Assurez-vous que params[2] existe
+            else
+                log_message_client(sender->getFd(), "Error: Invalid limit for +l mode");
+            ++paramIndex;
+        }
+        else
+            log_message_client(sender->getFd(), "Error: Missing number for +l mode");
+    }
+    else
+        chan->clearUserLimit();
+}

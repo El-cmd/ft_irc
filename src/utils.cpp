@@ -91,3 +91,15 @@ std::stack<char> initQueue(std::string param)
     }
     return _stack;
 }
+
+bool isValidNumber(const std::string& str)
+{
+    char* endptr;
+    errno = 0;
+    long val = strtol(str.c_str(), &endptr, 10);
+    if (errno == ERANGE || val > INT_MAX || val < INT_MIN)
+        return false;
+    if (*endptr != '\0')
+        return false;
+    return true;
+}

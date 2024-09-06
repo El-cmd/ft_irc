@@ -22,6 +22,12 @@ class Channel
         void setTopic(std::string &topic);
         void setInviteOnly(bool mode);
         void setTopicRestricted(bool mode);
+        void setKey(std::string pswd);
+        void clearKey();
+        void addOperator(client *newOp);
+        void removeOperator(client *newOp);
+        void setUserLimit(int limit);
+        void clearUserLimit();
     /* ++++++++++++++ */
     private:
         Channel();

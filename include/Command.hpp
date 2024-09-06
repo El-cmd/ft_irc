@@ -22,11 +22,12 @@ class Command
         void Mode(const std::vector<std::string> &params, client *sender, Server *tmp);
     /* +++++++++++++++++ */
     /* +++ Mode option +++*/
-        void applyMode(Channel* chan, client* sender, char mode, bool addMode, const std::vector<std::string>& params, Server* tmp);
+        void applyMode(Channel* chan, client* sender, char mode, bool addMode, const std::vector<std::string>& params, Server* tmp, int& paramIndex);
         void handleInviteOnlyMode(Channel* chan, bool addMode);
         void handleTopicRestrictionMode(Channel* chan, bool addMode);
-
-
+        void handleChannelKeyMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params, int& paramIndex);
+        void handleOperatorMode(Channel* chan, client* sender, bool addMode, const std::vector<std::string>& params,Server* tmp, int& paramIndex);
+        void handleUserLimitMode(Channel *chan, client* sender, bool addMode, const std::vector<std::string>& params, int& paramIndex);
     /* +++++++++++++++++ */
 
         typedef void (Command::*CommandHandler)(const std::vector<std::string> &, client *, Server *);

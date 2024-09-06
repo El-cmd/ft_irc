@@ -20,6 +20,9 @@ class Server
 		bool chanNeedPswd(std::string name);
 		Channel *findChan(std::string name);
 	/* + + + + + + + + + + + */
+	/* +++ Getter +++ */
+		client *findClient(std::string name);
+	/* + + + + + + + + + + + */
 	private:
 
 	/* +++ Coplian Form +++ */

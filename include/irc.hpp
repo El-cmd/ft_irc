@@ -14,6 +14,8 @@
 #include <poll.h>
 #include <map>
 #include <stack>
+#include <cerrno>
+#include <climits>
 #include <algorithm>
 #include <exception>
 #include <arpa/inet.h>
