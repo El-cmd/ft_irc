@@ -250,6 +250,8 @@ void Server::Run()
 					break ;
 				}
 				handle_client_message(tmp->fd);
+				//if (_channels.size())
+				//	std::cout << (*_channels.begin())->getName() << std::endl;
 			}
 		}
 	}

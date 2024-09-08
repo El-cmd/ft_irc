@@ -20,6 +20,7 @@ class Command
         void Nick(const std::vector<std::string> &params, client *sender, Server *tmp);
         void Topic(const std::vector<std::string> &params, client *sender, Server *tmp);
         void Mode(const std::vector<std::string> &params, client *sender, Server *tmp);
+        void Quit(const std::vector<std::string> &params, client *sender, Server *tmp);
     /* +++++++++++++++++ */
     /* +++ Mode option +++*/
         void applyMode(Channel* chan, client* sender, char mode, bool addMode, const std::vector<std::string>& params, Server* tmp, int& paramIndex);

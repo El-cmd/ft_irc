@@ -17,7 +17,7 @@ class client
     std::string getNick();
     std::string getUser();
     std::string getRealname();
-    std::vector<Channel *> getChan();
+    std::vector<Channel *>& getChan();
     /* + + + + + + + + + + + */
     /* +++ Setter +++ */
     void setNick(std::string str);

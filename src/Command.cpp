@@ -8,6 +8,7 @@ Command::Command()
     _commands["TOPIC"] = &Command::Topic;
     _commands["JOIN"] = &Command::Join;
     _commands["MODE"] = &Command::Mode;
+    _commands["QUIT"] = &Command::Quit;
 }
 
 Command::~Command()
@@ -144,6 +145,12 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
     }
 }
 
+void Command::Quit(const std::vector<std::string> &params, client *sender, Server *tmp)
+{
+    std::cout << (*sender->getChan().begin())->getName()  << std::endl;
+    (void) params;
+    (void) tmp;
+}
 
 /* +++++++++++++++++++++++++++++ */
 

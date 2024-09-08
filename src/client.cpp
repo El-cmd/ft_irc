@@ -23,7 +23,7 @@ client::client()
 
 /* +++ Getter +++ */
 
-std::vector<Channel *> client::getChan()
+std::vector<Channel *>& client::getChan()
 {
     return this->_channels;
 }
