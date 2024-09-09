@@ -103,3 +103,38 @@ bool isValidNumber(const std::string& str)
         return false;
     return true;
 }
+
+void sendQuitMessageToAllChannels(client* sender, const std::vector<std::string> params)
+{
+    std::string fullQuitMessage = sender->getNick() + " disconnected from the server";
+    if (params.size() > 0)
+    {
+        std::vector<std::string>::const_iterator messIt = params.begin();
+        fullQuitMessage += " :";
+        while (messIt != params.end())
+        {
+            fullQuitMessage += *messIt + " ";
+            messIt++;
+        }
+    }
+    std::set<client*> notifiedClients;
+    std::vector<Channel*>::iterator chanIt = sender->getChan().begin();
+    while (chanIt != sender->getChan().end())
+    {
+        Channel* channel = *chanIt;
+        std::map<int, client*>::iterator clientIt = channel->getClientsInChan().begin();
+        while (clientIt != channel->getClientsInChan().end())
+        {
+            client* recipient = clientIt->second;
+            if (recipient != sender && notifiedClients.find(recipient) == notifiedClients.end())
+            {
+                log_message_client(recipient->getFd(), fullQuitMessage);
+                notifiedClients.insert(recipient);
+            }
+            ++clientIt;
+        }
+        channel->getClientsInChan().erase(sender->getFd());
+        ++chanIt;
+    }
+    sender->getChan().clear();
+}

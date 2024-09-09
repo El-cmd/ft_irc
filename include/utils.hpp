@@ -11,5 +11,6 @@ void log_message_client(int fd, const std::string &message);
 bool verifOptionMode(std::string param);
 std::stack<char> initQueue(std::string param);
 bool isValidNumber(const std::string& str);
+void sendQuitMessageToAllChannels(client* sender, const std::vector<std::string> params);
 
 #endif

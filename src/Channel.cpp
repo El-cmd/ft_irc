@@ -53,6 +53,12 @@ bool Channel::itsAnOp(client *sender)
         return false;
     return true;
 }
+
+std::map<int, client*>& Channel::getClientsInChan()
+{
+    return this->_clients;
+}
+
 /* +++++++++++++++ */
 
 /* +++ Setter +++ */

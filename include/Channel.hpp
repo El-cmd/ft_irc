@@ -17,6 +17,7 @@ class Channel
         bool getOnInvite();
         bool getTopicRestricted();
         bool itsAnOp(client *sender);
+        std::map<int, client*>& getClientsInChan();
     /* ++++++++++++++ */
     /* +++ Setter +++ */
         void setTopic(std::string &topic);

@@ -147,9 +147,8 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
 
 void Command::Quit(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
-    std::cout << (*sender->getChan().begin())->getName()  << std::endl;
-    (void) params;
-    (void) tmp;
+    sendQuitMessageToAllChannels(sender, params);
+    
 }
 
 /* +++++++++++++++++++++++++++++ */
