@@ -148,7 +148,8 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
 void Command::Quit(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     sendQuitMessageToAllChannels(sender, params);
-    
+    log_message(sender->getNick() + " diconnected from the server");
+    tmp->handleClientDeconnection(sender);
 }
 
 /* +++++++++++++++++++++++++++++ */

@@ -217,7 +217,24 @@ void Server::handle_client_message(int fd)
 }
 /* ++++++++++++++++++++++++ */
 
+/* +++ Evenement POLLHUP et client QUIT +++ */
 
+void Server::handleClientDeconnection(client *sender)
+{
+	_clients.erase(sender->getFd());
+	for (size_t i = 0; i < _pfd.size(); ++i)
+	{
+        if (_pfd[i].fd == sender->getFd())
+		{
+            _pfd.erase(_pfd.begin() + i);
+			close(sender->getFd());
+            break;
+        }
+    }
+	delete sender;
+}
+
+/* ++++++++++++++++++++++++ */
 /* +++ SERV RUN  +++ */
 // Méthode principale de l'exécution du serveur
 void Server::Run()
@@ -239,6 +256,7 @@ void Server::Run()
 			// Gestion de l'événement POLLHUP (fermeture de connexion)
 			if ((tmp->revents & POLLHUP) == POLLHUP)
 			{
+				//handleClientDeconnection(tmp->);
 				break ;
 			}
 			// Gestion de l'événement POLLIN (données disponibles en lecture)

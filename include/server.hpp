@@ -23,6 +23,9 @@ class Server
 	/* +++ Getter +++ */
 		client *findClient(std::string name);
 	/* + + + + + + + + + + + */
+	/* +++ Evenement POLLHUP et client QUIT +++ */
+		void handleClientDeconnection(client *sender);
+	/* + + + + + + + + + + + */
 	private:
 
 	/* +++ Coplian Form +++ */
@@ -47,7 +50,7 @@ class Server
 		void handle_client_message(int fd);
 		void client_connection();
 	/* + + + + + + + + + + + */
-	
+
 	/* +++ variables +++ */
 		std::vector<struct pollfd> _pfd;
 		std::map<int, client *> _clients;
