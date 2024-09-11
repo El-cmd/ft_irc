@@ -107,14 +107,14 @@ bool isValidNumber(const std::string& str)
 void sendQuitMessageToAllChannels(client* sender, const std::vector<std::string> params)
 {
     std::string fullQuitMessage = sender->getNick() + " disconnected from the server";
-    if (params.size() > 0)
+    if (!params.empty())
     {
-        std::vector<std::string>::const_iterator messIt = params.begin();
         fullQuitMessage += " :";
-        while (messIt != params.end())
+        for (std::vector<std::string>::const_iterator messIt = params.begin(); messIt != params.end(); ++messIt)
         {
-            fullQuitMessage += *messIt + " ";
-            messIt++;
+            fullQuitMessage += *messIt;
+            if (messIt + 1 != params.end())  // Éviter un espace à la fin
+                fullQuitMessage += " ";
         }
     }
     std::set<client*> notifiedClients;
@@ -122,6 +122,7 @@ void sendQuitMessageToAllChannels(client* sender, const std::vector<std::string>
     while (chanIt != sender->getChan().end())
     {
         Channel* channel = *chanIt;
+        std::vector<int> clientsToRemove;
         std::map<int, client*>::iterator clientIt = channel->getClientsInChan().begin();
         while (clientIt != channel->getClientsInChan().end())
         {
@@ -131,9 +132,12 @@ void sendQuitMessageToAllChannels(client* sender, const std::vector<std::string>
                 log_message_client(recipient->getFd(), fullQuitMessage);
                 notifiedClients.insert(recipient);
             }
+            if (recipient == sender)
+                clientsToRemove.push_back(clientIt->first);
             ++clientIt;
         }
-        channel->getClientsInChan().erase(sender->getFd());
+        for (std::vector<int>::iterator it = clientsToRemove.begin(); it != clientsToRemove.end(); ++it)
+            channel->getClientsInChan().erase(*it);
         ++chanIt;
     }
     sender->getChan().clear();

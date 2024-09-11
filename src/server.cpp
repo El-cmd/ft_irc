@@ -219,19 +219,24 @@ void Server::handle_client_message(int fd)
 
 /* +++ Evenement POLLHUP et client QUIT +++ */
 
-void Server::handleClientDeconnection(client *sender)
+void Server::handleClientDeconnectionQUIT(client *sender)
 {
-	_clients.erase(sender->getFd());
-	for (size_t i = 0; i < _pfd.size(); ++i)
-	{
-        if (_pfd[i].fd == sender->getFd())
-		{
+	//sendQuitMessageToAllChannels(sender, nullptr);
+    int fd = sender->getFd();  // Récupérer le descripteur avant suppression
+
+    // Supprimer l'entrée pollfd pour le client
+    for (size_t i = 0; i < _pfd.size(); ++i) {
+        if (_pfd[i].fd == fd) {
             _pfd.erase(_pfd.begin() + i);
-			close(sender->getFd());
             break;
         }
     }
-	delete sender;
+    // Supprimer le client de la map des clients
+    _clients.erase(fd);
+    // Fermer la socket
+    close(fd);
+    delete sender;
+    // Libérer la mémoire du client
 }
 
 /* ++++++++++++++++++++++++ */
@@ -249,15 +254,27 @@ void Server::Run()
 			throw std::runtime_error("Error: polling init");
 
 		// Parcourt les événements du poll
-		for(_itpfd tmp = _pfd.begin(); tmp != _pfd.end(); tmp++)
+		for(_itpfd tmp = _pfd.begin(); tmp != _pfd.end();)
 		{
 			if (tmp->revents == 0)
+			{
+				++tmp;
 				continue ;
+			}
 			// Gestion de l'événement POLLHUP (fermeture de connexion)
 			if ((tmp->revents & POLLHUP) == POLLHUP)
 			{
-				//handleClientDeconnection(tmp->);
-				break ;
+				int fd = tmp->fd;
+				++tmp;
+				//tmp = _pfd.erase(tmp);
+				if (_clients.find(fd) != _clients.end())
+				{
+					client* clientToDisconnect = _clients[fd];
+					handleClientDeconnectionQUIT(clientToDisconnect	);
+				}
+				if (_pfd.empty())
+					break;
+				continue; 
 			}
 			// Gestion de l'événement POLLIN (données disponibles en lecture)
 			if ((tmp->revents & POLLIN) == POLLIN)
@@ -268,6 +285,8 @@ void Server::Run()
 					break ;
 				}
 				handle_client_message(tmp->fd);
+				++tmp;
+
 				//if (_channels.size())
 				//	std::cout << (*_channels.begin())->getName() << std::endl;
 			}

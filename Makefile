@@ -19,7 +19,7 @@ $(NAME) : $(OBJ)
 		  @printf "\e[92;5;118m\n>>> Executable ready\n\e[0m"
 
 %.o : %.cpp
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) $(FLAGS) -c $< -o $@ -g
 
 clean :
 	@printf "\033[00;31m>>> Object files removed.\n\033[00m"

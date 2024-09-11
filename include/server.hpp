@@ -24,7 +24,7 @@ class Server
 		client *findClient(std::string name);
 	/* + + + + + + + + + + + */
 	/* +++ Evenement POLLHUP et client QUIT +++ */
-		void handleClientDeconnection(client *sender);
+		void handleClientDeconnectionQUIT(client *sender);
 	/* + + + + + + + + + + + */
 	private:
 
