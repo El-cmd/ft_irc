@@ -256,10 +256,12 @@ void Server::Run()
 		// Parcourt les événements du poll
 		for(_itpfd tmp = _pfd.begin(); tmp != _pfd.end();)
 		{
+			if (_pfd.empty())
+				break;
 			if (tmp->revents == 0)
 			{
 				++tmp;
-				continue ;
+				continue; 
 			}
 			// Gestion de l'événement POLLHUP (fermeture de connexion)
 			if ((tmp->revents & POLLHUP) == POLLHUP)
@@ -272,9 +274,7 @@ void Server::Run()
 					client* clientToDisconnect = _clients[fd];
 					handleClientDeconnectionQUIT(clientToDisconnect	);
 				}
-				if (_pfd.empty())
-					break;
-				continue; 
+				break; 
 			}
 			// Gestion de l'événement POLLIN (données disponibles en lecture)
 			if ((tmp->revents & POLLIN) == POLLIN)
@@ -286,7 +286,7 @@ void Server::Run()
 				}
 				handle_client_message(tmp->fd);
 				++tmp;
-
+				break;
 				//if (_channels.size())
 				//	std::cout << (*_channels.begin())->getName() << std::endl;
 			}
