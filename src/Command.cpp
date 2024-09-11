@@ -151,7 +151,7 @@ void Command::Quit(const std::vector<std::string> &params, client *sender, Serve
     log_message(sender->getNick() + " disconnected from the server");
 
     // Envoyer le message de déconnexion à tous les autres utilisateurs
-    sendQuitMessageToAllChannels(sender, params);  // Appel de la fonction globale
+    //sendQuitMessageToAllChannels(sender, params);  // Appel de la fonction globale
     (void) params;
     // Supprimer le client proprement
     tmp->handleClientDeconnectionQUIT(sender);
