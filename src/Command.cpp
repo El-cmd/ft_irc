@@ -9,6 +9,8 @@ Command::Command()
     _commands["JOIN"] = &Command::Join;
     _commands["MODE"] = &Command::Mode;
     _commands["QUIT"] = &Command::Quit;
+    _commands["INVITE"] = &Command::Invite;
+    _commands["KICK"] = &Command::Kick;
 }
 
 Command::~Command()
@@ -147,16 +149,47 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
 
 void Command::Quit(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
-   // Conserver les informations nécessaires du client avant la suppression
     log_message(sender->getNick() + " disconnected from the server");
-
-    // Envoyer le message de déconnexion à tous les autres utilisateurs
-    //sendQuitMessageToAllChannels(sender, params);  // Appel de la fonction globale
-    (void) params;
-    // Supprimer le client proprement
+    sendQuitMessageToAllChannels(sender, params);
     tmp->handleClientDeconnectionQUIT(sender);
+    // ne pas oublier si le client est le seul operateur d'un channel
 }
 
+void Command::Kick(const std::vector<std::string> &params, client *sender, Server *tmp)
+{
+    (void) params;
+    (void) sender;
+    (void) tmp;
+}
+
+void Command::Invite(const std::vector<std::string> &params, client *sender, Server *tmp)
+{
+    if (params.size() != 2)
+        return ; // mettre un message d'erreur
+    if (!tmp->channelAlreadyExist(params[1]))
+    {
+        log_message_client(sender->getFd(), "This channel doesn't exist");
+        return ;
+    }
+    Channel *chan = tmp->findChan(params[1]);
+    if (!chan->itsAnOp(sender) || !chan->alreadyIn(sender))
+    {
+        log_message_client(sender->getFd(), "You are not authorized to invite someone in this channel");
+        return ;
+    }
+    if (!tmp->clientExist(params[0]))
+    {
+        log_message_client(sender->getFd(), "This client " + params[0] + " doesn't exist");
+        return ;
+    }
+    client *clientToInvite = tmp->findClient(params[0]);
+    if (chan->alreadyIn(clientToInvite))
+    {
+        log_message_client(sender->getFd(), "This client is already in this channel");
+        return ;
+    }
+    
+}
 /* +++++++++++++++++++++++++++++ */
 
 

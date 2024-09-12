@@ -70,6 +70,19 @@ client *Server::findClient(std::string name)
 	}
 	return NULL;
 }
+
+bool Server::clientExist(std::string name)
+{
+	std::map<int, client*>::iterator it = _clients.begin();
+	while (it != _clients.end())
+	{
+		if (it->second->getNick() == name)
+			return true;
+		it++;
+	}
+	return false;
+}
+
 /* ++++++++++++++++++++++++ */
 
 
@@ -181,6 +194,8 @@ bool Server::chanNeedPswd(std::string name)
 	}
 	return false;
 }
+
+
 
 Channel *Server::findChan(std::string name)
 {

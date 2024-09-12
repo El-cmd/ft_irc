@@ -19,6 +19,7 @@ class Server
 		bool channelAlreadyExist(std::string name);
 		bool chanNeedPswd(std::string name);
 		Channel *findChan(std::string name);
+		bool clientExist(std::string name);
 	/* + + + + + + + + + + + */
 	/* +++ Getter +++ */
 		client *findClient(std::string name);
