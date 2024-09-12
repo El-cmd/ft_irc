@@ -43,6 +43,7 @@ class client
     std::string _username;
     std::string _realname;
     std::vector<Channel *> _channels;
+    std::vector<Channel *> _invitationChannel; // push les invitation channel dedans
     /* + + + + + + + + + + + */
 };
 

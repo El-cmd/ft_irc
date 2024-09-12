@@ -188,7 +188,8 @@ void Command::Invite(const std::vector<std::string> &params, client *sender, Ser
         log_message_client(sender->getFd(), "This client is already in this channel");
         return ;
     }
-    
+    log_message_client(clientToInvite->getFd(), sender->getNick() + " Invite " + clientToInvite->getNick() + " :" + chan->getName());
+    // ne pas oublier de faire un vector dans le client inviter pour avoir les channel dans lesquel il est invité
 }
 /* +++++++++++++++++++++++++++++ */
 
