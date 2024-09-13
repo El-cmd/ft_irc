@@ -24,6 +24,7 @@ class client
     void setUsername(std::string str);
     void setRealname(std::string str);
     void setAuth();
+    void addNewInvite(Channel *invite);
     /* + + + + + + + + + + + */
     private:
 

@@ -86,3 +86,8 @@ void client::setAuth()
     this->_auth = true;
 }
 /* ++++++++++++++++++++++++++++++ */
+
+void client::addNewInvite(Channel *invite)
+{
+    this->_invitationChannel.push_back(invite);
+}
