@@ -136,11 +136,26 @@ void Channel::addOperator(client *newOp)
     if (!itsAnOp(newOp))
     
         _operator.push_back(newOp);
-    
 }
 
 void Channel::removeOperator(client *newOp)
 {
     if (itsAnOp(newOp))
         _operator.erase(std::remove(_operator.begin(), _operator.end(), newOp), _operator.end());
+}
+
+void Channel::channelAllMessage(std::string message)
+{
+    std::map<int, client*>::iterator it = _clients.begin();
+    while (it != _clients.end())
+    {
+        log_message_client(it->second->getFd(), message);
+        it++;
+    }
+}
+
+void Channel::removeClient(client *tokick)
+{
+    if (_clients.find(tokick->getFd()) != _clients.end())
+        _clients.erase(tokick->getFd());
 }

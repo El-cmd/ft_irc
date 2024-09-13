@@ -157,9 +157,33 @@ void Command::Quit(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Kick(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
-    (void) params;
-    (void) sender;
-    (void) tmp;
+    if (params.size() != 2)
+        return ;
+    if (!tmp->channelAlreadyExist(params[0]))
+    {
+        log_message_client(sender->getFd(), "This channel doesn't exist");
+        return ;
+    }
+    Channel *chan = tmp->findChan(params[0]);
+    if (!chan->itsAnOp(sender) || !chan->alreadyIn(sender))
+    {
+        log_message_client(sender->getFd(), "You are not authorized to kick someone in this channel");
+        return ;
+    }
+    if (!tmp->clientExist(params[1]))
+    {
+        log_message_client(sender->getFd(), "This client " + params[1] + " doesn't exist");
+        return ;
+    }
+    client *clientToKick = tmp->findClient(params[1]);
+    if (!chan->alreadyIn(clientToKick))
+    {
+        log_message_client(sender->getFd(), "This client " + params[1] + " is not in this channel");
+        return ;
+    }
+    chan->channelAllMessage(clientToKick->getNick() + " has been kick on this channel by " + sender->getNick());
+    chan->removeClient(clientToKick);
+
 }
 
 void Command::Invite(const std::vector<std::string> &params, client *sender, Server *tmp)

@@ -9,11 +9,13 @@ class Channel
         Channel(std::string args, client *creator, Server *serv);
         ~Channel();
         void addClient(client *sender);
+        void removeClient(client *tokick);
         bool alreadyIn(client *sender);
     /* +++ Getter +++ */
         std::string getName();
         bool withKey();
         std::string getTopic();
+        void channelAllMessage(std::string message);
         bool getOnInvite();
         bool getTopicRestricted();
         bool itsAnOp(client *sender);
