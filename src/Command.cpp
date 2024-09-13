@@ -158,7 +158,10 @@ void Command::Quit(const std::vector<std::string> &params, client *sender, Serve
 void Command::Kick(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     if (params.size() != 2)
+    {
+        log_message_client(sender->getFd(), "Not enough parameters for this command");
         return ;
+    }
     if (!tmp->channelAlreadyExist(params[0]))
     {
         log_message_client(sender->getFd(), "This channel doesn't exist");
@@ -183,13 +186,15 @@ void Command::Kick(const std::vector<std::string> &params, client *sender, Serve
     }
     chan->channelAllMessage(clientToKick->getNick() + " has been kick on this channel by " + sender->getNick());
     chan->removeClient(clientToKick);
-
 }
 
 void Command::Invite(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     if (params.size() != 2)
-        return ; // mettre un message d'erreur
+    {
+        log_message_client(sender->getFd(), "Not enough parameters for this command");
+        return ;
+    }
     if (!tmp->channelAlreadyExist(params[1]))
     {
         log_message_client(sender->getFd(), "This channel doesn't exist");

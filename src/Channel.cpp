@@ -134,7 +134,6 @@ void Channel::addClient(client *sender)
 void Channel::addOperator(client *newOp)
 {
     if (!itsAnOp(newOp))
-    
         _operator.push_back(newOp);
 }
 
@@ -158,4 +157,6 @@ void Channel::removeClient(client *tokick)
 {
     if (_clients.find(tokick->getFd()) != _clients.end())
         _clients.erase(tokick->getFd());
+    if (itsAnOp(tokick))
+        _operator.erase(std::remove(_operator.begin(), _operator.end(), tokick), _operator.end());
 }
