@@ -11,6 +11,7 @@ Command::Command()
     _commands["QUIT"] = &Command::Quit;
     _commands["INVITE"] = &Command::Invite;
     _commands["KICK"] = &Command::Kick;
+    _commands["PRIVMSG"] = &Command::PrivMsg;
 }
 
 Command::~Command()
@@ -35,6 +36,14 @@ void Command::execute(const std::string &command, client *sender, Server *tmp)
 }
 
 /* +++ Les commandes IRC +++ */
+
+void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Server *tmp)
+{
+    (void) params;
+    (void) sender;
+    (void) tmp;
+}
+
 void Command::User(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     (void) tmp;
@@ -219,8 +228,10 @@ void Command::Invite(const std::vector<std::string> &params, client *sender, Ser
     }
     log_message_client(clientToInvite->getFd(), sender->getNick() + " Invite " + clientToInvite->getNick() + " :" + chan->getName());
     clientToInvite->addNewInvite(chan);
-    // ne pas oublier de faire un vector dans le client inviter pour avoir les channel dans lesquel il est invité
+    // ne pas oublier de verifier dans join quand cest channel privée de reagrder sil a une invite
 }
+
+
 /* +++++++++++++++++++++++++++++ */
 
 

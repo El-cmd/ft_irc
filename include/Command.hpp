@@ -23,6 +23,7 @@ class Command
         void Quit(const std::vector<std::string> &params, client *sender, Server *tmp);
         void Kick(const std::vector<std::string> &params, client *sender, Server *tmp);
         void Invite(const std::vector<std::string> &params, client *sender, Server *tmp);
+        void PrivMsg(const std::vector<std::string> &params, client *sender, Server *tmp);
     /* +++++++++++++++++ */
     /* +++ Mode option +++*/
         void applyMode(Channel* chan, client* sender, char mode, bool addMode, const std::vector<std::string>& params, Server* tmp, int& paramIndex);
