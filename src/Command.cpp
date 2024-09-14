@@ -39,9 +39,55 @@ void Command::execute(const std::string &command, client *sender, Server *tmp)
 
 void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
-    (void) params;
-    (void) sender;
-    (void) tmp;
+    int chanOrUser;
+    std::string message;
+    std::string chanstr;
+    std::ostringstream oss;
+    oss << "<" << VERT << sender->getNick() << REINIT << "> ";
+    if (params.size() < 2)
+    {
+        log_message_client(sender->getFd(), "Not enough parameters for this command");
+        return ;
+    }
+    if (params[0][0] == '#')
+    {
+        if (!params[0][1])
+        {
+            return ; // mettre message d'erreur
+        }
+        chanstr = params[0].substr(1);
+        chanOrUser = 1;
+    }
+    else
+        chanOrUser = 0;
+    if (chanOrUser)
+    {
+        if (!tmp->channelAlreadyExist(chanstr))
+        {
+            log_message_client(sender->getFd(), "This channel doesn't exist");
+            return ;
+        }
+        Channel *chan = tmp->findChan(chanstr);
+        if (!chan->alreadyIn(sender))
+        {
+            log_message_client(sender->getFd(), "Cannot send a message to a channel if you are not in");
+            return ;
+        }
+        sendMessageToChannel(chan, joinStringsExcludingFirst(params), sender);
+
+    }
+    else
+    {
+        if (!tmp->clientExist(params[0]))
+        {
+            log_message_client(sender->getFd(), "This client " + params[0] + " doesn't exist");
+            return ;
+        }
+        std::ostringstream oss;
+        oss << "<" << VERT << sender->getNick() << REINIT << "> ";
+        client *toSend = tmp->findClient(params[0]);
+        log_message_client(toSend->getFd(), oss.str() + joinStringsExcludingFirst(params));
+    }
 }
 
 void Command::User(const std::vector<std::string> &params, client *sender, Server *tmp)

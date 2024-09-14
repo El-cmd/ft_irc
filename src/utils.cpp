@@ -142,3 +142,35 @@ void sendQuitMessageToAllChannels(client* sender, const std::vector<std::string>
     }
     sender->getChan().clear();
 }
+
+std::string joinStringsExcludingFirst(const std::vector<std::string>& vec)
+{
+    std::string result;
+    if (vec.size() > 1)
+    {
+        for (size_t i = 1; i < vec.size(); ++i)
+        {
+            result += vec[i];
+            if (i != vec.size() - 1)
+                result += " ";
+        }
+    }
+    return result;
+}
+
+void sendMessageToChannel(Channel* channel, const std::string& message, client* sender)
+{
+    std::map<int, client*>& clients = channel->getClientsInChan();
+    std::string fullMessage;
+    std::ostringstream oss;
+    oss << "<" << VERT << sender->getNick() << REINIT << "> ";
+    std::ostringstream osss;
+    osss << "<" << JAUNE << channel->getName() << REINIT << "> ";
+    fullMessage = osss.str() + oss.str() + ":" + message + "\r\n";
+    client* recipient;
+    for (std::map<int, client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        recipient = it->second;
+        log_message_client(recipient->getFd(), fullMessage);
+    }
+}

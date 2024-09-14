@@ -12,5 +12,7 @@ bool verifOptionMode(std::string param);
 std::stack<char> initQueue(std::string param);
 bool isValidNumber(const std::string& str);
 void sendQuitMessageToAllChannels(client* sender, const std::vector<std::string> params);
+std::string joinStringsExcludingFirst(const std::vector<std::string>& vec);
+void sendMessageToChannel(Channel* channel, const std::string& message, client* sender);
 
 #endif
