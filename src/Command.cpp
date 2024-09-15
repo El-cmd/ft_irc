@@ -39,6 +39,11 @@ void Command::execute(const std::string &command, client *sender, Server *tmp)
 
 void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    if (!sender->isRegister())
+    {
+        log_message_client(sender->getFd(), "Vous n'etes pas authentifier");
+        return ;
+    }
     int chanOrUser;
     std::string message;
     std::string chanstr;
@@ -93,6 +98,11 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
 void Command::User(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     (void) tmp;
+    if (!sender->getAuth())
+    {
+        log_message_client(sender->getFd(), "Veuillez rentrer le mot de passe avant tout autre action");
+        return ;
+    }
     if (!params[0].empty() && !params[1].empty())
     {
         sender->setUsername(params[0]);
@@ -129,10 +139,15 @@ void Command::Pass(const std::vector<std::string> &params, client *sender, Serve
 void Command::Nick(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
     (void) tmp;
+    if (!sender->getAuth())
+    {
+        log_message_client(sender->getFd(), "Veuillez rentrer le mot de passe avant tout autre action");
+        return ;
+    }
     if (params.size() != 1)
     {
         log_message_client(sender->getFd(), "Commande inconnue: Pas assez d'arguments");
-        return; //message d'erreur;
+        return;
     }
     sender->setNick(params[0]);
     log_message_client(sender->getFd(), sender->getNick() + " is your new nickname.");
@@ -145,6 +160,11 @@ void Command::Nick(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Join(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    if (!sender->isRegister())
+    {
+        log_message_client(sender->getFd(), "Vous n'etes pas authentifier");
+        return ;
+    }
     std::vector<std::string>::const_iterator it = params.begin();
     if (params.empty())
         return ; // message d'erreur
@@ -168,6 +188,11 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Topic(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    if (!sender->isRegister())
+    {
+        log_message_client(sender->getFd(), "Vous n'etes pas authentifier");
+        return ;
+    }
     Channel *chan;
     if (params.empty())
         return ;
@@ -212,6 +237,11 @@ void Command::Quit(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Kick(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    if (!sender->isRegister())
+    {
+        log_message_client(sender->getFd(), "Vous n'etes pas authentifier");
+        return ;
+    }
     if (params.size() != 2)
     {
         log_message_client(sender->getFd(), "Not enough parameters for this command");
@@ -245,6 +275,11 @@ void Command::Kick(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Invite(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    if (!sender->isRegister())
+    {
+        log_message_client(sender->getFd(), "Vous n'etes pas authentifier");
+        return ;
+    }
     if (params.size() != 2)
     {
         log_message_client(sender->getFd(), "Not enough parameters for this command");
@@ -283,6 +318,11 @@ void Command::Invite(const std::vector<std::string> &params, client *sender, Ser
 
 void Command::Mode(const std::vector<std::string>& params, client* sender, Server* tmp) 
 {
+    if (!sender->isRegister())
+    {
+        log_message_client(sender->getFd(), "Vous n'etes pas authentifier");
+        return ;
+    }
     // Vérification des paramètres
     if (params.size() < 2)
     {

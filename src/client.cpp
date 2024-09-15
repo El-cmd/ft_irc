@@ -23,6 +23,13 @@ client::client()
 
 /* +++ Getter +++ */
 
+bool client::isRegister()
+{
+    if (!_auth || _nick.empty() || _username.empty() || _realname.empty())
+        return false;
+    return true;
+}
+
 std::vector<Channel *>& client::getChan()
 {
     return this->_channels;
