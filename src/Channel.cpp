@@ -59,6 +59,11 @@ std::map<int, client*>& Channel::getClientsInChan()
     return this->_clients;
 }
 
+std::string Channel::getKey()
+{
+    return this->_mdp;
+}
+
 /* +++++++++++++++ */
 
 /* +++ Setter +++ */

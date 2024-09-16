@@ -5,13 +5,13 @@ Command::Command()
     _commands["NICK"] = &Command::Nick;
     _commands["PASS"] = &Command::Pass;
     _commands["USER"] = &Command::User;
-    _commands["TOPIC"] = &Command::Topic;
-    _commands["JOIN"] = &Command::Join;
-    _commands["MODE"] = &Command::Mode;
+    _commands["TOPIC"] = &Command::Topic; //besoin du #
+    _commands["JOIN"] = &Command::Join; //besoin du #
+    _commands["MODE"] = &Command::Mode; //besoin du #
     _commands["QUIT"] = &Command::Quit;
-    _commands["INVITE"] = &Command::Invite;
-    _commands["KICK"] = &Command::Kick;
-    _commands["PRIVMSG"] = &Command::PrivMsg;
+    _commands["KICK"] = &Command::Kick; //besoin du #
+    _commands["INVITE"] = &Command::Invite; //besoin du #
+    _commands["PRIVMSG"] = &Command::PrivMsg; //besoin du #
 }
 
 Command::~Command()
@@ -60,19 +60,18 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
         {
             return ; // mettre message d'erreur
         }
-        chanstr = params[0].substr(1);
         chanOrUser = 1;
     }
     else
         chanOrUser = 0;
     if (chanOrUser)
     {
-        if (!tmp->channelAlreadyExist(chanstr))
+        if (!tmp->channelAlreadyExist(params[0]))
         {
             log_message_client(sender->getFd(), "This channel doesn't exist");
             return ;
         }
-        Channel *chan = tmp->findChan(chanstr);
+        Channel *chan = tmp->findChan(params[0]);
         if (!chan->alreadyIn(sender))
         {
             log_message_client(sender->getFd(), "Cannot send a message to a channel if you are not in");
@@ -103,6 +102,11 @@ void Command::User(const std::vector<std::string> &params, client *sender, Serve
         log_message_client(sender->getFd(), "Veuillez rentrer le mot de passe avant tout autre action");
         return ;
     }
+    if (!sender->getUser().empty() && !sender->getRealname().empty())
+    {
+        log_message_client(sender->getFd(), "Vous etes deja authentifier");
+        return ;
+    }
     if (!params[0].empty() && !params[1].empty())
     {
         sender->setUsername(params[0]);
@@ -113,7 +117,7 @@ void Command::User(const std::vector<std::string> &params, client *sender, Serve
         log_message_client(sender->getFd(), "Commande inconnue: Pas assez d'arguments");
         return ;
     }
-    if (sender->getAuth() && !sender->getRealname().empty() && !sender->getUser().empty() && !sender->getNick().empty())
+    if (sender->isRegister())
     {
         log_message(sender->getNick() + " is authentified");
         log_message_client(sender->getFd(), sender->getNick() + " is authentified");
@@ -129,11 +133,6 @@ void Command::Pass(const std::vector<std::string> &params, client *sender, Serve
     }
     if (tmp->auth(params[0]))
         sender->setAuth();
-    if (sender->getAuth() && !sender->getRealname().empty() && !sender->getUser().empty() && !sender->getNick().empty())
-    {
-        log_message(sender->getNick() + " is authentified");
-        log_message_client(sender->getFd(), sender->getNick() + " is authentified");
-    }
 }
 
 void Command::Nick(const std::vector<std::string> &params, client *sender, Server *tmp)
@@ -151,7 +150,7 @@ void Command::Nick(const std::vector<std::string> &params, client *sender, Serve
     }
     sender->setNick(params[0]);
     log_message_client(sender->getFd(), sender->getNick() + " is your new nickname.");
-    if (sender->getAuth() && !sender->getRealname().empty() && !sender->getUser().empty() && !sender->getNick().empty())
+    if (sender->isRegister())
     {
         log_message(sender->getNick() + " is authentified");
         log_message_client(sender->getFd(), sender->getNick() + " is authentified");
@@ -165,24 +164,62 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
         log_message_client(sender->getFd(), "Vous n'etes pas authentifier");
         return ;
     }
-    std::vector<std::string>::const_iterator it = params.begin();
     if (params.empty())
         return ; // message d'erreur
-    Channel *chan;
-    while (it != params.end())
+    std::vector<std::string> channels;
+    std::vector<std::string> keys;
+    // On découpe le premier paramètre par des virgules pour obtenir les canaux
+    std::stringstream ss(params[0]);
+    std::string channel;
+    while (std::getline(ss, channel, ','))
     {
-        if (!tmp->channelAlreadyExist(*it))
+        channels.push_back(channel);
+    }
+    // Si des clés sont présentes, on les découpe par des virgules également
+    if (params.size() > 1)
+    {
+        std::stringstream keyStream(params[1]);
+        std::string key;
+        while (std::getline(keyStream, key, ','))
         {
-            chan = new Channel(*it, sender, tmp);
-            it++;
-            break;
+            keys.push_back(key);
         }
-        else
-            chan = tmp->findChan(*it);
-        if (tmp->channelAlreadyExist(*it) && !chan->withKey() && !chan->getOnInvite())
-            chan->addClient(sender);
-        //rajouter pour les channel avec des mdp et sur invite
-        it++;
+    }
+    // Pour chaque canal, vérifier et ajouter le client
+    size_t keyIndex = 0;  // Pour suivre les mots de passe fournis
+    for (size_t i = 0; i < channels.size(); i++)
+    {
+        std::string current_channel = channels[i];
+        std::string current_key = "";  // Valeur par défaut
+
+        // Vérifier si le canal existe déjà
+        Channel* chan = tmp->findChan(current_channel);
+        if (!chan)
+        {
+            // Créer un nouveau canal si aucun n'existe
+            chan = new Channel(current_channel, sender, tmp);
+            tmp->newChannel(chan);
+        }
+        // Déterminer la clé du canal actuel
+        if (chan->withKey())
+        {
+            // Si le canal nécessite une clé, on utilise la clé suivante disponible
+            if (keyIndex < keys.size())
+            {
+                current_key = keys[keyIndex];
+            }
+            keyIndex++;  // Passer à la clé suivante pour le prochain canal avec clé
+        }
+        // Si le canal a une clé et que la clé fournie est incorrecte
+        if (chan->withKey() && chan->getKey() != current_key)
+        {
+            // Clé incorrecte, envoyer une erreur à l'utilisateur
+            log_message_client(sender->getFd(), "Nique ta mere");
+            continue;  // Passer au canal suivant, ne pas ajouter le client
+        }
+        // Ajouter le client au canal
+        chan->addClient(sender);
+        //sender->addChannel(chan);
     }
 }
 

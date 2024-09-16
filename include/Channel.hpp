@@ -17,6 +17,7 @@ class Channel
         std::string getTopic();
         void channelAllMessage(std::string message);
         bool getOnInvite();
+        std::string getKey();
         bool getTopicRestricted();
         bool itsAnOp(client *sender);
         std::map<int, client*>& getClientsInChan();
