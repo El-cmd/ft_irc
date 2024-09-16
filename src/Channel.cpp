@@ -125,11 +125,11 @@ bool Channel::alreadyIn(client *sender)
 
 void Channel::addClient(client *sender)
 {
-    if (alreadyIn(sender))
-    {
-        log_message_client(sender->getFd(), "You are already in " + this->getName() + " Channel");
-        return ;
-    }
+    //if (alreadyIn(sender))
+    //{
+    //    log_message_client(sender->getFd(), "You are already in " + this->getName() + " Channel");
+    //    return ;
+    //}
     sender->getChan().push_back(this);
     this->_clients.insert(std::make_pair(sender->getFd(), sender));
     log_message_client(sender->getFd(), "You joined " + this->getName() + " Channel");

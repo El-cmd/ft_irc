@@ -171,6 +171,7 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
     // On découpe le premier paramètre par des virgules pour obtenir les canaux
     std::stringstream ss(params[0]);
     std::string channel;
+    Channel* chan;
     while (std::getline(ss, channel, ','))
     {
         channels.push_back(channel);
@@ -191,15 +192,22 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
     {
         std::string current_channel = channels[i];
         std::string current_key = "";  // Valeur par défaut
-
+    
         // Vérifier si le canal existe déjà
-        Channel* chan = tmp->findChan(current_channel);
-        if (!chan)
+        if (!tmp->channelAlreadyExist(current_channel))
         {
             // Créer un nouveau canal si aucun n'existe
             chan = new Channel(current_channel, sender, tmp);
             tmp->newChannel(chan);
+            continue;
         }
+        else
+            chan = tmp->findChan(current_channel);
+        if (chan->alreadyIn(sender))
+        {
+            log_message_client(sender->getFd(), "Tu es deja dans le chan");
+            continue;
+;       }
         // Déterminer la clé du canal actuel
         if (chan->withKey())
         {
