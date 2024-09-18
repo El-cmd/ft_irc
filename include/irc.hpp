@@ -28,6 +28,7 @@
 class client;
 class Server;
 class Channel;
+#include "RPL_replies.hpp"
 #include "Channel.hpp"
 #include "Command.hpp"
 #include "utils.hpp"

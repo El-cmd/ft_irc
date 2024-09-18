@@ -5,6 +5,7 @@ client::client(int fd): _fd(fd)
     _auth = false;
     struct sockaddr_in addr;
     socklen_t addr_len = sizeof(addr);
+    _hostname = "localhost";
     // Utiliser getpeername pour obtenir les infos du client
     if (getpeername(fd, (struct sockaddr*)&addr, &addr_len) == -1)
     {
@@ -98,3 +99,27 @@ void client::addNewInvite(Channel *invite)
 {
     this->_invitationChannel.push_back(invite);
 }
+
+/* +++ RPL +++ */
+
+std::string     client::get_prefix() const 
+{
+    std::string username = _username.empty() ? "" : "!" + _username;
+    std::string hostname = _hostname.empty() ? "" : "@" + _hostname;
+
+    return _nick + username + hostname;
+}
+
+void    client::sendRpl(const std::string& reply)
+{
+    this->write(":" + get_prefix() + " " + reply);
+}
+
+void    client::write(const std::string &message) const
+{
+    std::string buff = message + "\r\n";
+    if (send(_fd, buff.c_str(), buff.size(), 0) < 0)
+        throw std::runtime_error("Error while sending message");
+}
+
+/* ++++++++++++++++++++++++++++++ */

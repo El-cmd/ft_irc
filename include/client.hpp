@@ -7,6 +7,11 @@ class client
 {
     public:
 
+    /* RPL*/
+    std::string get_prefix() const;
+    void sendRpl(const std::string &message);
+    void write(const std::string &message) const;
+    /* + + + + + + + + + + + */
     client(int fd);
     ~client();
     /* +++ Getter +++ */
@@ -43,6 +48,7 @@ class client
     bool _auth;
     std::string _nick;
     std::string _username;
+    std::string _hostname;
     std::string _realname;
     std::vector<Channel *> _channels;
     std::vector<Channel *> _invitationChannel; // push les invitation channel dedans

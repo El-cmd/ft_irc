@@ -1,6 +1,8 @@
 #ifndef RPL_REPLIES_HPP
     #define RPL_REPLIES_HPP
 
+#include "irc.hpp"
+
 /* Error Responses */
 
 #define ERR_NOTREGISTERED(source)                       "451 " + source + " :You have not registered"

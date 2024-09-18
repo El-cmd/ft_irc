@@ -25,25 +25,40 @@ void log_message(const std::string& message)
 
 void log_message_client(int fd, const std::string &message)
 {
-    std::string time_str = get_current_time();
-    std::string to_send = "[" + time_str + "] " + message + "\r\n";
+    //std::string time_str = get_current_time();
+    //std::string to_send = "[" + time_str + "] " + message + "\r\n";
+    std::string to_send = message + "\r\n";
     ssize_t bytes_sent = send(fd, to_send.c_str(), to_send.size(), 0);
     if (bytes_sent == -1)
         throw std::runtime_error("Error sending message to client");
 }
 
-std::string trim_all(const std::string& str) 
+
+bool is_whitespace(char c)
 {
-    std::string result;
+    return c == '\n' || c == '\r' || c == '\t' || c == '\f' || c == '\v';
+}
 
-    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+// Fonction pour découper une chaîne en sous-chaînes, séparées par des espaces spécifiés
+std::vector<std::string> trim_all(const std::string& str)
+{
+    std::vector<std::string> result;
+    std::string token;
+    std::istringstream tokenStream(str);
+
+    while (std::getline(tokenStream, token))
     {
-        if (!std::isspace(*it)) 
-            result += *it;
+        size_t start = 0, end = token.size();
+        while (start < end && is_whitespace(token[start]))
+            ++start;
+        while (end > start && is_whitespace(token[end - 1]))
+            --end;
+        if (start < end)
+            result.push_back(token.substr(start, end - start));
     }
-
     return result;
 }
+
 
 std::vector<std::string> parse_command(const std::string &message) {
     std::vector<std::string> parts;
