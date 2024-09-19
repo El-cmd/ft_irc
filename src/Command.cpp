@@ -260,12 +260,15 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
 {
     if (!sender->isRegister())
     {
-        log_message_client(sender->getFd(), "3Vous n'etes pas authentifier");
+        sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
     Channel *chan;
     if (params.empty())
+    {
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "TOPIC"));
         return ;
+    }
     if (!tmp->channelAlreadyExist(params[0]))
     {
         log_message_client(sender->getFd(), "This channel doesn't exist");
@@ -309,12 +312,12 @@ void Command::Kick(const std::vector<std::string> &params, client *sender, Serve
 {
     if (!sender->isRegister())
     {
-        log_message_client(sender->getFd(), "4Vous n'etes pas authentifier");
+        sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
     if (params.size() != 2)
     {
-        log_message_client(sender->getFd(), "Not enough parameters for this command");
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "KICK"));
         return ;
     }
     if (!tmp->channelAlreadyExist(params[0]))
@@ -347,12 +350,12 @@ void Command::Invite(const std::vector<std::string> &params, client *sender, Ser
 {
     if (!sender->isRegister())
     {
-        log_message_client(sender->getFd(), "5Vous n'etes pas authentifier");
+        sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
     if (params.size() != 2)
     {
-        log_message_client(sender->getFd(), "Not enough parameters for this command");
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "INVITE"));
         return ;
     }
     if (!tmp->channelAlreadyExist(params[1]))
@@ -390,13 +393,13 @@ void Command::Mode(const std::vector<std::string>& params, client* sender, Serve
 {
     if (!sender->isRegister())
     {
-        log_message_client(sender->getFd(), "6Vous n'etes pas authentifier");
+        sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
     // Vérification des paramètres
     if (params.size() < 2)
     {
-        log_message_client(sender->getFd(), "Error: Not enough parameters");
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "MODE"));
         return;
     }
     if (!tmp->channelAlreadyExist(params[0]))
