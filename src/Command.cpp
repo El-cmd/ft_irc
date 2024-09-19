@@ -48,7 +48,7 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
 {
     if (!sender->isRegister())
     {
-        log_message_client(sender->getFd(), "2Vous n'etes pas authentifier");
+        sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
     int chanOrUser;
@@ -58,7 +58,7 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
     oss << "<" << VERT << sender->getNick() << REINIT << "> ";
     if (params.size() < 2)
     {
-        log_message_client(sender->getFd(), "Not enough parameters for this command");
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "PRIVMSG"));
         return ;
     }
     if (params[0][0] == '#')
