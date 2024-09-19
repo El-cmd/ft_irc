@@ -171,6 +171,18 @@ void Server::newChannel(Channel *chan)
 	this->_channels.push_back(chan);
 }
 
+bool Server::isValidNick(std::string name)
+{
+	std::map<int, client*>::iterator it = _clients.begin();
+	while (it != _clients.end())
+	{
+		if (name == it->second->getNick())
+			return false;
+		it++;
+	}
+	return true;
+}
+
 bool Server::channelAlreadyExist(std::string name)
 {
 	std::vector<Channel *>::iterator it = this->_channels.begin();

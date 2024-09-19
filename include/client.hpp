@@ -49,6 +49,7 @@ class client
     std::string _nick;
     std::string _username;
     std::string _hostname;
+    std::string _domain;
     std::string _realname;
     std::vector<Channel *> _channels;
     std::vector<Channel *> _invitationChannel; // push les invitation channel dedans

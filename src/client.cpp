@@ -6,6 +6,7 @@ client::client(int fd): _fd(fd)
     struct sockaddr_in addr;
     socklen_t addr_len = sizeof(addr);
     _hostname = "localhost";
+    _domain = "ft_irc";
     // Utiliser getpeername pour obtenir les infos du client
     if (getpeername(fd, (struct sockaddr*)&addr, &addr_len) == -1)
     {

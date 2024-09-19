@@ -106,22 +106,22 @@ void Command::User(const std::vector<std::string> &params, client *sender, Serve
     (void) tmp;
     if (!sender->getAuth())
     {
-        log_message_client(sender->getFd(), "Veuillez rentrer le mot de passe avant tout autre action");
+        sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
     if (!sender->getUser().empty() && !sender->getRealname().empty())
     {
-        log_message_client(sender->getFd(), "Vous etes deja authentifier");
+        sender->sendRpl(ERR_ALREADYREGISTERED(sender->getNick()));
         return ;
     }
-    if (!params[0].empty() && !params[1].empty())
+    if (params.size() == 4)
     {
         sender->setUsername(params[0]);
-        sender->setRealname(params[1]);
+        sender->setRealname(params[3]);
     }
     else
     {
-        log_message_client(sender->getFd(), "1Commande inconnue: Pas assez d'arguments");
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "USER"));
         return ;
     }
     if (sender->isRegister())
@@ -133,21 +133,12 @@ void Command::User(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Pass(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
-    //std::cout << params[0] << std::endl;
-    //std::cout << params[1] << std::endl;
-    ////if (params.size() != 1)
-    //{
-    //    log_message_client(sender->getFd(), " Commande inconnue: Pas assez d'arguments");
-    //    return ;
-    //}
-    //if (tmp->auth(params[0]))
-    //    sender->setAuth();
     if (sender->isRegister())
     {
         sender->sendRpl(ERR_ALREADYREGISTERED(sender->getNick()));
         return;
     }
-    if (params.empty())
+    if (params.size() != 1)
     {
         sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "PASS"));
         return;
@@ -163,19 +154,24 @@ void Command::Pass(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Nick(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
-    (void) tmp;
     if (!sender->getAuth())
     {
-        log_message_client(sender->getFd(), "Veuillez rentrer le mot de passe avant tout autre action");
+        sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
     if (params.size() != 1)
     {
-        log_message_client(sender->getFd(), "Commande inconnue: Pas assez d'arguments");
+        sender->sendRpl(ERR_NONICKNAMEGIVEN(sender->getNick()));
         return;
     }
+    if (!tmp->isValidNick(params[0]))
+    {
+        sender->sendRpl(ERR_NICKNAMEINUSE(params[0]));
+        return ;
+    }
+    if (!sender->getNick().empty())
+        log_message(sender->getNick() + " changed nickname with " + params[0]);
     sender->setNick(params[0]);
-    //log_message_client(sender->getFd(), sender->getNick() + " is your new nickname.");
     if (sender->isRegister())
     {
         sender->sendRpl(RPL_WELCOME(sender->getNick()));
@@ -191,7 +187,10 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
         return ;
     }
     if (params.empty())
-        return ; // message d'erreur
+    {
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "JOIN"));
+        return ;
+    }
     std::vector<std::string> channels;
     std::vector<std::string> keys;
     // On découpe le premier paramètre par des virgules pour obtenir les canaux
@@ -231,7 +230,7 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
             chan = tmp->findChan(current_channel);
         if (chan->alreadyIn(sender))
         {
-            log_message_client(sender->getFd(), "Tu es deja dans le chan");
+            sender->sendRpl(ERR_USERONCHANNEL(sender->getNick(), sender->getUser(), chan->getName()));
             continue;
 ;       }
         // Déterminer la clé du canal actuel
@@ -248,7 +247,7 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
         if (chan->withKey() && chan->getKey() != current_key)
         {
             // Clé incorrecte, envoyer une erreur à l'utilisateur
-            log_message_client(sender->getFd(), "Nique ta mere");
+            sender->sendRpl(ERR_BADCHANNELKEY(sender->getNick(), chan->getName()));
             continue;  // Passer au canal suivant, ne pas ajouter le client
         }
         // Ajouter le client au canal

@@ -14,6 +14,7 @@ class Server
 		void Run();
 		bool auth(const std::string &Pass);
 
+		bool isValidNick(std::string name);
 	/* +++ Gerer les channels +++ */
 		void newChannel(Channel *chan);
 		bool channelAlreadyExist(std::string name);

@@ -24,7 +24,7 @@
 
 #define ERR_NOSUCHNICK(source, nickname)                "401 " + source + " " + nickname + " :No such nick/channel"
 #define ERR_USERNOTINCHANNEL(source, nickname, channel) "441 " + source + " " + nickname + " " + channel + " :They aren't on that channel"
-
+#define ERR_USERONCHANNEL(nick, user, channel)          "443 " + nick + " " + user + " " + channel + " :is already on channel"
 
 /* Numeric Responses */
 
