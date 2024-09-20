@@ -24,6 +24,7 @@
 
 #define ERR_NOSUCHNICK(source, nickname)                "401 " + source + " " + nickname + " :No such nick/channel"
 #define ERR_USERNOTINCHANNEL(source, nickname, channel) "441 " + source + " " + nickname + " " + channel + " :They aren't on that channel"
+#define ERR_NOTONCHANNEL(source, channel)               "442 " + source + " " + channel + " :You're not on that channel"
 #define ERR_USERONCHANNEL(nick, user, channel)          "443 " + nick + " " + user + " " + channel + " :is already on channel"
 
 /* Numeric Responses */
@@ -31,7 +32,8 @@
 #define RPL_WELCOME(source)                             "001 " + source + " :Welcome " + source + " to the ft_irc network"
 #define RPL_NAMREPLY(source, channel, users)            "353 " + source + " = " + channel + " :" + users
 #define RPL_ENDOFNAMES(source, channel)                 "366 " + source + " " + channel + " :End of /NAMES list."
-
+#define RPL_TOPIC(nick, channel, topic)                 "332 " + nick + " " + channel + " :" + topic
+#define RPL_NOTOPIC(nick, channel)                      "331 " + nick + " " + channel + " :No topic is set"
 
 /* Command Responses */
 

@@ -64,6 +64,23 @@ std::string Channel::getKey()
     return this->_mdp;
 }
 
+std::string Channel::getUserList()
+{
+    std::string userList;
+    
+    for (std::map<int, client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        client* currentClient = it->second;
+        userList += currentClient->getNick();
+        if (itsAnOp(currentClient))
+            userList = "@" + userList;
+        userList += " ";
+    }
+    if (!userList.empty() && userList[userList.size() - 1] == ' ')
+        userList.erase(userList.size() - 1);
+    return userList;
+}
+
 /* +++++++++++++++ */
 
 /* +++ Setter +++ */
@@ -125,14 +142,8 @@ bool Channel::alreadyIn(client *sender)
 
 void Channel::addClient(client *sender)
 {
-    //if (alreadyIn(sender))
-    //{
-    //    log_message_client(sender->getFd(), "You are already in " + this->getName() + " Channel");
-    //    return ;
-    //}
     sender->getChan().push_back(this);
     this->_clients.insert(std::make_pair(sender->getFd(), sender));
-    log_message_client(sender->getFd(), "You joined " + this->getName() + " Channel");
     log_message(sender->getNick() + " joined the " + this->getName() + " Channel");
 }
 

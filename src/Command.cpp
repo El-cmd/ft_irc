@@ -193,66 +193,61 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
     }
     std::vector<std::string> channels;
     std::vector<std::string> keys;
-    // On découpe le premier paramètre par des virgules pour obtenir les canaux
     std::stringstream ss(params[0]);
     std::string channel;
     Channel* chan;
     while (std::getline(ss, channel, ','))
-    {
         channels.push_back(channel);
-    }
-    // Si des clés sont présentes, on les découpe par des virgules également
     if (params.size() > 1)
     {
         std::stringstream keyStream(params[1]);
         std::string key;
         while (std::getline(keyStream, key, ','))
-        {
             keys.push_back(key);
-        }
     }
-    // Pour chaque canal, vérifier et ajouter le client
-    size_t keyIndex = 0;  // Pour suivre les mots de passe fournis
+    size_t keyIndex = 0;
     for (size_t i = 0; i < channels.size(); i++)
     {
         std::string current_channel = channels[i];
-        std::string current_key = "";  // Valeur par défaut
-    
-        // Vérifier si le canal existe déjà
+        std::string current_key = "";
+
         if (!tmp->channelAlreadyExist(current_channel))
         {
-            // Créer un nouveau canal si aucun n'existe
             chan = new Channel(current_channel, sender, tmp);
             tmp->newChannel(chan);
+            sender->sendRpl(RPL_NOTOPIC(sender->getNick(), current_channel));
+            sender->sendRpl(RPL_NAMREPLY(sender->getNick(), current_channel, chan->getUserList()));
+            sender->sendRpl(RPL_ENDOFNAMES(sender->getNick(), current_channel));
             continue;
         }
         else
             chan = tmp->findChan(current_channel);
         if (chan->alreadyIn(sender))
         {
-            sender->sendRpl(ERR_USERONCHANNEL(sender->getNick(), sender->getUser(), chan->getName()));
+            sender->sendRpl(ERR_USERONCHANNEL(sender->getNick(), sender->getUser(), current_channel));
             continue;
 ;       }
-        // Déterminer la clé du canal actuel
         if (chan->withKey())
         {
-            // Si le canal nécessite une clé, on utilise la clé suivante disponible
             if (keyIndex < keys.size())
             {
                 current_key = keys[keyIndex];
             }
-            keyIndex++;  // Passer à la clé suivante pour le prochain canal avec clé
+            keyIndex++;
         }
-        // Si le canal a une clé et que la clé fournie est incorrecte
         if (chan->withKey() && chan->getKey() != current_key)
         {
-            // Clé incorrecte, envoyer une erreur à l'utilisateur
-            sender->sendRpl(ERR_BADCHANNELKEY(sender->getNick(), chan->getName()));
-            continue;  // Passer au canal suivant, ne pas ajouter le client
+            sender->sendRpl(ERR_BADCHANNELKEY(sender->getNick(), current_channel));
+            continue;
         }
-        // Ajouter le client au canal
         chan->addClient(sender);
-        //sender->addChannel(chan);
+        if (chan->getTopic().empty())
+            sender->sendRpl(RPL_NOTOPIC(sender->getNick(), current_channel));
+        else
+            sender->sendRpl(RPL_TOPIC(sender->getNick(), current_channel, chan->getTopic()));
+        sender->sendRpl(RPL_NAMREPLY(sender->getNick(), current_channel, chan->getUserList()));
+        sender->sendRpl(RPL_ENDOFNAMES(sender->getNick(), current_channel));
+        //ne pas oublier la capacité des chan et les chan sur invitationç
     }
 }
 
@@ -271,7 +266,7 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
     }
     if (!tmp->channelAlreadyExist(params[0]))
     {
-        log_message_client(sender->getFd(), "This channel doesn't exist");
+        sender->sendRpl(ERR_NOSUCHCHANNEL(sender->getNick(), params[0]));
         return ;
     }
     else
@@ -289,14 +284,22 @@ void Command::Topic(const std::vector<std::string> &params, client *sender, Serv
                     topic += *it + " ";
                     it++;
                 }
+                topic.erase(topic.size() - 1);
                 chan->setTopic(topic);
-                log_message_client(sender->getFd(), "You are set a new Topic in " + chan->getName() + " Channel"); 
+                sender->sendRpl(RPL_TOPIC(sender->getNick(), chan->getName(), topic));
             }
+            else if (params.size() > 1 && chan->getTopicRestricted() && !chan->itsAnOp(sender))
+                sender->sendRpl(ERR_CHANOPRIVSNEEDED(sender->getNick(), chan->getName()));
             else if (params.size() == 1)
-                log_message_client(sender->getFd(), chan->getTopic());
+            {
+                if (chan->getTopic().empty())
+                    sender->sendRpl(RPL_NOTOPIC(sender->getNick(), chan->getName()));
+                else
+                    sender->sendRpl(RPL_TOPIC(sender->getNick(), chan->getName(), chan->getTopic()));
+            }
         }
         else
-            log_message_client(sender->getFd(), "You are not authorized to access this channel");
+            sender->sendRpl(ERR_NOTONCHANNEL(sender->getNick(), chan->getName()));
     }
 }
 

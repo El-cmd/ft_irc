@@ -12,6 +12,7 @@ class Channel
         void removeClient(client *tokick);
         bool alreadyIn(client *sender);
     /* +++ Getter +++ */
+        std::string getUserList();
         std::string getName();
         bool withKey();
         std::string getTopic();
