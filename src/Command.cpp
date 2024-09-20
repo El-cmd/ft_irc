@@ -325,24 +325,29 @@ void Command::Kick(const std::vector<std::string> &params, client *sender, Serve
     }
     if (!tmp->channelAlreadyExist(params[0]))
     {
-        log_message_client(sender->getFd(), "This channel doesn't exist");
+        sender->sendRpl(ERR_NOSUCHCHANNEL(sender->getNick(), params[0]));
         return ;
     }
     Channel *chan = tmp->findChan(params[0]);
-    if (!chan->itsAnOp(sender) || !chan->alreadyIn(sender))
+    if (!chan->itsAnOp(sender))
     {
-        log_message_client(sender->getFd(), "You are not authorized to kick someone in this channel");
+        sender->sendRpl(ERR_CHANOPRIVSNEEDED(sender->getNick(), chan->getName()));
+        return ;
+    }
+    if (!chan->alreadyIn(sender))
+    {
+        sender->sendRpl(ERR_NOTONCHANNEL(sender->getNick(), chan->getName()));
         return ;
     }
     if (!tmp->clientExist(params[1]))
     {
-        log_message_client(sender->getFd(), "This client " + params[1] + " doesn't exist");
+        sender->sendRpl(ERR_USERNOTINCHANNEL(sender->getNick(), params[1], chan->getName()));
         return ;
     }
     client *clientToKick = tmp->findClient(params[1]);
     if (!chan->alreadyIn(clientToKick))
     {
-        log_message_client(sender->getFd(), "This client " + params[1] + " is not in this channel");
+        sender->sendRpl(ERR_USERNOTINCHANNEL(sender->getNick(), params[1], chan->getName()));
         return ;
     }
     chan->channelAllMessage(clientToKick->getNick() + " has been kick on this channel by " + sender->getNick());
