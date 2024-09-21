@@ -23,6 +23,7 @@ class Channel
         bool getTopicRestricted();
         bool itsAnOp(client *sender);
         std::map<int, client*>& getClientsInChan();
+        int getLimit();
     /* ++++++++++++++ */
     /* +++ Setter +++ */
         void setTopic(std::string &topic);

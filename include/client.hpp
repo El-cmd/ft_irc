@@ -16,6 +16,7 @@ class client
     client(int fd);
     ~client();
     /* +++ Getter +++ */
+    bool isInvited(Channel *chan);
     int getFd();
     std::string getIp();
     int getPort();
@@ -24,6 +25,7 @@ class client
     std::string getUser();
     std::string getRealname();
     std::vector<Channel *>& getChan();
+    std::vector<Channel *>& getInviteChan();
     bool isRegister();
     /* + + + + + + + + + + + */
     /* +++ Setter +++ */

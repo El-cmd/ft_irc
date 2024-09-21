@@ -216,6 +216,16 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
         }
         else
             chan = tmp->findChan(current_channel);
+        if (chan->getOnInvite() && !sender->isInvited(chan))
+        {
+            sender->sendRpl(ERR_INVITEONLYCHAN(sender->getNick(), current_channel));
+            continue;
+        }
+        if (chan->getClientsInChan().size() == chan->getLimit())
+        {
+            sender->sendRpl(ERR_CHANNELISFULL(sender->getNick(), current_channel));
+            continue ;
+        }
         if (chan->alreadyIn(sender))
         {
             sender->sendRpl(ERR_USERONCHANNEL(sender->getNick(), sender->getUser(), current_channel));

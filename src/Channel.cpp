@@ -64,6 +64,11 @@ std::string Channel::getKey()
     return this->_mdp;
 }
 
+int Channel::getLimit()
+{
+    return this->_nbLim;
+}
+
 std::string Channel::getUserList()
 {
     std::string userList;
@@ -187,3 +192,4 @@ void Channel::removeClient(client *tokick)
     if (itsAnOp(tokick))
         _operator.erase(std::remove(_operator.begin(), _operator.end(), tokick), _operator.end());
 }
+

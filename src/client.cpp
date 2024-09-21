@@ -32,6 +32,23 @@ bool client::isRegister()
     return true;
 }
 
+bool client::isInvited(Channel* chan)
+{
+    std::vector<Channel *>::iterator it = this->_invitationChannel.begin();
+    while (it != this->_invitationChannel.end())
+    {
+        if (chan == *it)
+            return true;
+        it++;
+    }
+    return false;
+}
+
+std::vector<Channel *>& client::getInviteChan()
+{
+    return this->_invitationChannel;
+}
+
 std::vector<Channel *>& client::getChan()
 {
     return this->_channels;
