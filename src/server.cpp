@@ -94,6 +94,10 @@ void Server::initSock()
 	this->_sockFdToListen = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_sockFdToListen == -1)
 		throw std::runtime_error("(SERVER) echec d'initialisation du socket");
+	//Configuration de l'option pour fermer le port imeddiatement apres la fin du programme
+	int opt = 1;
+    if (setsockopt(_sockFdToListen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+		throw std::runtime_error("(SERVER) echec setsockopt");
 
 	// Configuration de l'adresse du socket
 	this->socket_adress.sin_family = AF_INET;
@@ -277,14 +281,14 @@ void Server::Run()
 	while (_state)
 	{
 		// Surveillance des événements sur le socket
-		if (poll(this->_pfd.begin().base(), _pfd.size(), -1) < 0)
+		if (poll(this->_pfd.begin().base(), _pfd.size(), -1) < 0 && _state != false)
 			throw std::runtime_error("Error: polling init");
 
 		// Parcourt les événements du poll
-		for(_itpfd tmp = _pfd.begin(); tmp != _pfd.end();)
+		for(_itpfd tmp = _pfd.begin(); tmp != _pfd.end() && _state;)
 		{
 			if (_pfd.empty())
-				break;
+				continue;
 			if (tmp->revents == 0)
 			{
 				++tmp;
@@ -301,7 +305,7 @@ void Server::Run()
 					client* clientToDisconnect = _clients[fd];
 					handleClientDeconnectionQUIT(clientToDisconnect	);
 				}
-				break; 
+				continue; 
 			}
 			// Gestion de l'événement POLLIN (données disponibles en lecture)
 			if ((tmp->revents & POLLIN) == POLLIN)
@@ -309,15 +313,14 @@ void Server::Run()
 				if (tmp->fd == this->_sockFdToListen)
 				{
 					client_connection();
-					break ;
+					break;
 				}
 				handle_client_message(tmp->fd);
 				++tmp;
 				break;
-				//if (_channels.size())
-				//	std::cout << (*_channels.begin())->getName() << std::endl;
 			}
 		}
 	}
+	close(this->_sockFdToListen);
 }
 /* ++++++++++++++++++++++++ */

@@ -221,7 +221,7 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
             sender->sendRpl(ERR_INVITEONLYCHAN(sender->getNick(), current_channel));
             continue;
         }
-        if (chan->getClientsInChan().size() == chan->getLimit())
+        if (chan->getBoolLimit() && chan->getClientsInChan().size() == chan->getLimit())
         {
             sender->sendRpl(ERR_CHANNELISFULL(sender->getNick(), current_channel));
             continue ;
@@ -251,7 +251,6 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
             sender->sendRpl(RPL_TOPIC(sender->getNick(), current_channel, chan->getTopic()));
         sender->sendRpl(RPL_NAMREPLY(sender->getNick(), current_channel, chan->getUserList()));
         sender->sendRpl(RPL_ENDOFNAMES(sender->getNick(), current_channel));
-        //ne pas oublier la capacité des chan et les chan sur invitationç
     }
 }
 
@@ -411,7 +410,6 @@ void Command::Invite(const std::vector<std::string> &params, client *sender, Ser
     sender->sendRpl(RPL_INVITING(sender->getNick(), chan->getName(), clientToInvite->getNick()));
     clientToInvite->addNewInvite(chan);
     clientToInvite->sendRpl(INVITE_NOTIFICATION(sender->getNick(), params[0], chan->getName()));
-    // ne pas oublier de verifier dans join quand cest channel privée de reagrder sil a une invite
 }
 
 

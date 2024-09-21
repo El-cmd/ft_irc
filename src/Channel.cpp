@@ -64,9 +64,14 @@ std::string Channel::getKey()
     return this->_mdp;
 }
 
-int Channel::getLimit()
+size_t Channel::getLimit()
 {
     return this->_nbLim;
+}
+
+bool Channel::getBoolLimit()
+{
+    return this->_limits;
 }
 
 std::string Channel::getUserList()

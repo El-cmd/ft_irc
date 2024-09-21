@@ -6,7 +6,7 @@ void handle_sigInt(int sig)
 {
 	(void)sig;
 	_state = false;
-	exit(sig);
+	//exit(sig);
 }
 
 int main(int ac, char **av)
