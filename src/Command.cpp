@@ -91,7 +91,7 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
             return ;
         }
         client *toSend = tmp->findClient(params[0]);
-        log_message_client(toSend->getFd(), oss.str() + joinStringsExcludingFirst(params));
+        toSend->sendchat(" PRIVMSG " + toSend->getNick() + " :" + joinStringsExcludingFirst(params), sender);
     }
 }
 

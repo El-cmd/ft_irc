@@ -1,0 +1,28 @@
+<< CAP LS 302
+<< JOIN :
+>> :@localhost 421  CAP :Unknown command
+>> :@localhost 451  :You have not registered
+<< PASS mdp
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :eldoc!eldoc@localhost 001 eldoc :Welcome eldoc to the ft_irc network
+<< MODE eldoc +i
+>> :eldoc!eldoc@localhost 403 eldoc eldoc :No such channel
+<< PING eldoc
+>> :eldoc!eldoc@localhost 421 eldoc PING :Unknown command
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va

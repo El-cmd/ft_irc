@@ -116,6 +116,11 @@ void    client::sendRpl(const std::string& reply)
     this->write(":" + get_prefix() + " " + reply);
 }
 
+void    client::sendchat(const std::string& reply, client* sender)
+{
+    this->write(":" + sender->get_prefix() + " " + reply);
+}
+
 void    client::write(const std::string &message) const
 {
     std::string buff = message + "\r\n";

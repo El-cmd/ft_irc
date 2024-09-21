@@ -11,6 +11,7 @@ class client
     std::string get_prefix() const;
     void sendRpl(const std::string &message);
     void write(const std::string &message) const;
+    void sendchat(const std::string& reply, client* sender);
     /* + + + + + + + + + + + */
     client(int fd);
     ~client();
