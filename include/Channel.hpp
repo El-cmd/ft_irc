@@ -16,6 +16,7 @@ class Channel
         std::string getName();
         bool withKey();
         std::string getTopic();
+        void channelAllMessageWithoutSender(std::string message, client* sender);
         void channelAllMessage(std::string message);
         bool getOnInvite();
         std::string getKey();

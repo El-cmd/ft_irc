@@ -63,10 +63,6 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
     }
     if (params[0][0] == '#')
     {
-        if (!params[0][1])
-        {
-            return ; // mettre message d'erreur
-        }
         chanOrUser = 1;
     }
     else
@@ -75,27 +71,25 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
     {
         if (!tmp->channelAlreadyExist(params[0]))
         {
-            log_message_client(sender->getFd(), "This channel doesn't exist");
+            sender->sendRpl(ERR_NOSUCHCHANNEL(sender->getNick(), params[0]));
             return ;
         }
         Channel *chan = tmp->findChan(params[0]);
         if (!chan->alreadyIn(sender))
         {
-            log_message_client(sender->getFd(), "Cannot send a message to a channel if you are not in");
+            sender->sendRpl(ERR_CANNOTSENDTOCHAN(sender->getNick(), chan->getName()));
             return ;
         }
-        sendMessageToChannel(chan, joinStringsExcludingFirst(params), sender);
+        chan->channelAllMessageWithoutSender(" PRIVMSG " + chan->getName() + " :" + oss.str() + joinStringsExcludingFirst(params), sender);
 
     }
     else
     {
         if (!tmp->clientExist(params[0]))
         {
-            log_message_client(sender->getFd(), "This client " + params[0] + " doesn't exist");
+            sender->sendRpl(ERR_NOSUCHNICK(sender->getNick(), params[0]));
             return ;
         }
-        std::ostringstream oss;
-        oss << "<" << VERT << sender->getNick() << REINIT << "> ";
         client *toSend = tmp->findClient(params[0]);
         log_message_client(toSend->getFd(), oss.str() + joinStringsExcludingFirst(params));
     }
@@ -313,12 +307,13 @@ void Command::Quit(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Kick(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    std::string reason;
     if (!sender->isRegister())
     {
         sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
         return ;
     }
-    if (params.size() != 2)
+    if (params.size() < 2)
     {
         sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "KICK"));
         return ;
@@ -350,7 +345,17 @@ void Command::Kick(const std::vector<std::string> &params, client *sender, Serve
         sender->sendRpl(ERR_USERNOTINCHANNEL(sender->getNick(), params[1], chan->getName()));
         return ;
     }
-    chan->channelAllMessage(clientToKick->getNick() + " has been kick on this channel by " + sender->getNick());
+    if (params.size() > 2)
+    {
+        std::vector<std::string>::const_iterator it = params.begin() + 2;
+        while (it != params.end())
+        {
+            reason += *it + " ";
+            it++;
+        }
+        reason.erase(reason.size() - 1);
+    }
+    chan->channelAllMessage(RPL_KICK(sender->getNick(), chan->getName(), clientToKick->getNick(), reason));
     chan->removeClient(clientToKick);
 }
 
@@ -368,28 +373,34 @@ void Command::Invite(const std::vector<std::string> &params, client *sender, Ser
     }
     if (!tmp->channelAlreadyExist(params[1]))
     {
-        log_message_client(sender->getFd(), "This channel doesn't exist");
+        sender->sendRpl(ERR_NOSUCHCHANNEL(sender->getNick(), params[1]));
         return ;
     }
     Channel *chan = tmp->findChan(params[1]);
-    if (!chan->itsAnOp(sender) || !chan->alreadyIn(sender))
+    if (!chan->itsAnOp(sender))
     {
-        log_message_client(sender->getFd(), "You are not authorized to invite someone in this channel");
+        sender->sendRpl(ERR_CHANOPRIVSNEEDED(sender->getNick(), chan->getName()));
+        return ;
+    }
+    if (!chan->alreadyIn(sender))
+    {
+        sender->sendRpl(ERR_NOTONCHANNEL(sender->getNick(), chan->getName()));
         return ;
     }
     if (!tmp->clientExist(params[0]))
     {
-        log_message_client(sender->getFd(), "This client " + params[0] + " doesn't exist");
+        sender->sendRpl(ERR_NOSUCHNICK(sender->getNick(), params[0]));
         return ;
     }
     client *clientToInvite = tmp->findClient(params[0]);
     if (chan->alreadyIn(clientToInvite))
     {
-        log_message_client(sender->getFd(), "This client is already in this channel");
+        sender->sendRpl(ERR_USERONCHANNEL(sender->getNick(), params[0], chan->getName()));
         return ;
     }
-    log_message_client(clientToInvite->getFd(), sender->getNick() + " Invite " + clientToInvite->getNick() + " :" + chan->getName());
+    sender->sendRpl(RPL_INVITING(sender->getNick(), chan->getName(), clientToInvite->getNick()));
     clientToInvite->addNewInvite(chan);
+    clientToInvite->sendRpl(INVITE_NOTIFICATION(sender->getNick(), params[0], chan->getName()));
     // ne pas oublier de verifier dans join quand cest channel privée de reagrder sil a une invite
 }
 
@@ -412,18 +423,23 @@ void Command::Mode(const std::vector<std::string>& params, client* sender, Serve
     }
     if (!tmp->channelAlreadyExist(params[0]))
     {
-        log_message_client(sender->getFd(), "Error: No such channel");
+        sender->sendRpl(ERR_NOSUCHCHANNEL(sender->getNick(), params[0]));
         return;
     }
     Channel* chan = tmp->findChan(params[0]);
-    if (!chan->alreadyIn(sender) && !chan->itsAnOp(sender))
+    if (!chan->alreadyIn(sender))
     {
-        log_message_client(sender->getFd(), "You are not authorized to access this channel");
+        sender->sendRpl(ERR_NOTONCHANNEL(sender->getNick(), params[0]));
         return;
+    }
+    if (!chan->itsAnOp(sender))
+    {
+        sender->sendRpl(ERR_CHANOPRIVSNEEDED(sender->getNick(), params[0]));
+        return ;
     }
     if (!verifOptionMode(params[1]))
     {
-        log_message_client(sender->getFd(), "Error: Invalid mode option");
+        sender->sendRpl(ERR_UNKNOWNMODE(sender->getNick(), params[1]));
         return;
     }
     std::stack<char> modeStack = initQueue(params[1]);
@@ -462,7 +478,7 @@ void Command::applyMode(Channel* chan, client* sender, char mode, bool addMode, 
             handleUserLimitMode(chan, sender, addMode, params, paramIndex);
             break;
         default:
-            log_message_client(sender->getFd(), "Error: Unknown mode");
+            sender->sendRpl(ERR_UNKNOWNMODE(sender->getNick(), params[paramIndex]));
             break;
     }
 }
@@ -493,7 +509,7 @@ void Command::handleChannelKeyMode(Channel* chan, client* sender, bool addMode, 
             ++paramIndex;
         }
         else
-            log_message_client(sender->getFd(), "Error: Missing key for +k mode");
+            sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "MODE +k"));
     } 
     else
         chan->clearKey();
@@ -508,13 +524,13 @@ void Command::handleOperatorMode(Channel* chan, client* sender, bool addMode, co
         ++paramIndex;
         if (target == NULL)
         {
-            log_message_client(sender->getFd(), "Error: Client not found for mode +o/-o");
-            return ;  // Message d'erreur
+            sender->sendRpl(ERR_NOSUCHNICK(sender->getNick(), params[paramIndex]));
+            return ; 
         }
     }
     else
     {
-        log_message_client(sender->getFd(), "Error: Missing name for +o/-o mode");
+        sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "MODE +o/-o"));
         return ;
     }
     if (addMode)
@@ -536,7 +552,7 @@ void Command::handleUserLimitMode(Channel* chan, client* sender, bool addMode, c
             ++paramIndex;
         }
         else
-            log_message_client(sender->getFd(), "Error: Missing number for +l mode");
+            sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "MODE +l"));
     }
     else
         chan->clearUserLimit();

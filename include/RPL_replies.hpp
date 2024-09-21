@@ -13,6 +13,7 @@
 
 #define ERR_UNKNOWNCOMMAND(source, command)             "421 " + source + " " + command + " :Unknown command"
 #define ERR_NEEDMOREPARAMS(source, command)             "461 " + source + " " + command + " :Not enough parameters"
+#define ERR_UNKNOWNMODE(source, mode)                   "472 " + source + " " + mode + " :is unknown mode char to me"
 
 #define ERR_TOOMANYCHANNELS(source, channel)            "405 " + source + " " + channel + " :You have joined too many channels"
 #define ERR_NOTONCHANNEL(source, channel)               "442 " + source + " " + channel + " :You're not on that channel"
@@ -45,6 +46,7 @@
 #define RPL_QUIT(source, message)                       ":" + source + " QUIT :Quit: " + message
 #define RPL_KICK(source, channel, target, reason)       ":" + source + " KICK " + channel + " " + target + " :" + reason
 #define RPL_MODE(source, channel, modes, args)          ":" + source + " MODE " + channel + " " + modes + " " + args
-
+#define RPL_INVITING(nick, channel, invited_nick)       "341 " + nick + " " + invited_nick + " :" + channel
+#define INVITE_NOTIFICATION(source, target, channel)    ":" + source + " INVITE " + target + " :" + channel
 
 #endif

@@ -164,7 +164,18 @@ void Channel::channelAllMessage(std::string message)
     std::map<int, client*>::iterator it = _clients.begin();
     while (it != _clients.end())
     {
-        log_message_client(it->second->getFd(), message);
+        it->second->sendRpl(message);
+        it++;
+    }
+}
+
+void Channel::channelAllMessageWithoutSender(std::string message, client *sender)
+{
+    std::map<int, client*>::iterator it = _clients.begin();
+    while (it != _clients.end())
+    {
+        if(it->second != sender)
+            it->second->sendRpl(message);
         it++;
     }
 }
