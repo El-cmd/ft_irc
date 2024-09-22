@@ -8,7 +8,6 @@ class Command
     public:
         Command();
         ~Command();
-
         void execute(const std::string &command, client *sender, Server *);
 
     private:

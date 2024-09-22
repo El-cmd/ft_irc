@@ -270,6 +270,19 @@ void Server::handleClientDeconnectionQUIT(client *sender)
     // Libérer la mémoire du client
 }
 
+void Server::deleteAllChannels(std::vector<Channel*>& channels)
+{
+    for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+	{
+        if (*it != NULL)
+		{
+            delete *it;  // Libérer la mémoire
+            *it = NULL;  // Éviter les doubles suppressions
+        }
+    }
+    channels.clear();  // Vider le vecteur
+}
+
 /* ++++++++++++++++++++++++ */
 /* +++ SERV RUN  +++ */
 // Méthode principale de l'exécution du serveur
@@ -277,11 +290,10 @@ void Server::Run()
 {
 	initSock();
 	initPoll();
-
 	while (_state)
 	{
 		// Surveillance des événements sur le socket
-		if (poll(this->_pfd.begin().base(), _pfd.size(), -1) < 0 && _state != false)
+		if (poll(this->_pfd.begin().base(), _pfd.size(), -1) < 0 && _state)
 			throw std::runtime_error("Error: polling init");
 
 		// Parcourt les événements du poll
@@ -303,7 +315,7 @@ void Server::Run()
 				if (_clients.find(fd) != _clients.end())
 				{
 					client* clientToDisconnect = _clients[fd];
-					handleClientDeconnectionQUIT(clientToDisconnect	);
+					handleClientDeconnectionQUIT(clientToDisconnect);
 				}
 				continue; 
 			}
@@ -321,6 +333,17 @@ void Server::Run()
 			}
 		}
 	}
+	std::map<int, client*>::iterator free = _clients.begin();
+	if (this->_clients.size() > 0)
+	{
+		while (_clients.begin() != _clients.end())
+		{
+			handleClientDeconnectionQUIT(free->second);
+			free = _clients.begin();
+		}
+	}
 	close(this->_sockFdToListen);
+	if (!this->_channels.empty())
+		deleteAllChannels(_channels);
 }
 /* ++++++++++++++++++++++++ */

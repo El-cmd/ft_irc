@@ -207,7 +207,7 @@ void Command::Join(const std::vector<std::string> &params, client *sender, Serve
 
         if (!tmp->channelAlreadyExist(current_channel))
         {
-            chan = new Channel(current_channel, sender, tmp);
+            chan = new Channel(current_channel, sender);
             tmp->newChannel(chan);
             sender->sendRpl(RPL_NOTOPIC(sender->getNick(), current_channel));
             sender->sendRpl(RPL_NAMREPLY(sender->getNick(), current_channel, chan->getUserList()));

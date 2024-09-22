@@ -124,7 +124,6 @@ std::string     client::get_prefix() const
 {
     std::string username = _username.empty() ? "" : "!" + _username;
     std::string hostname = _hostname.empty() ? "" : "@" + _hostname;
-
     return _nick + username + hostname;
 }
 

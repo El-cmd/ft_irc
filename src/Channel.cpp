@@ -1,22 +1,21 @@
 #include "../include/Channel.hpp"
 
-Channel::Channel(std::string name, client *creator, Server *serv): _name(name)
+Channel::Channel(std::string name, client *creator): _name(name)
 {
     log_message("The channel " + name + " has been created by " + creator->getNick());
-    log_message_client(creator->getFd(), "You are created the " + name + " Channel");
+    //log_message_client(creator->getFd(), "You are created the " + name + " Channel");
     _whithKey = false;
     _onInvite = false;
     _limits = false;
     _topicRestricted = false;
     _operator.push_back(creator);
     creator->getChan().push_back(this);
-    serv->newChannel(this);
+    //serv->newChannel(this);
     this->_clients.insert(std::make_pair(creator->getFd(), creator));
 }
 
 Channel::~Channel()
 {
-
 }
 
 /* +++ Getter +++ */

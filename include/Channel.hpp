@@ -6,7 +6,7 @@
 class Channel
 {
     public:
-        Channel(std::string args, client *creator, Server *serv);
+        Channel(std::string args, client *creator);
         ~Channel();
         void addClient(client *sender);
         void removeClient(client *tokick);
@@ -49,7 +49,6 @@ class Channel
         bool _limits;
         std::string _mdp;
         int _nbLim;
-
 };
 
 #endif
