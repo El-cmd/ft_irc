@@ -229,20 +229,54 @@ Channel *Server::findChan(std::string name)
 
 /* +++ Handle Message +++ */
 
+std::string Server::read_message(int fd)
+{
+    std::string message;
+    char buffer[100];
+    int bytes_received;
+
+    while (true)
+    {
+        bzero(buffer, 100);
+        bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
+        if (bytes_received < 0)
+		{
+            if (errno == EWOULDBLOCK || errno == EAGAIN)
+                        continue;
+            throw std::runtime_error("Error while reading buffer from a client!");
+		}
+        else if (bytes_received == 0)
+		{
+            log_message(_clients[fd]->getNick() + " disconnected (double Ctrl+D or connection closed)");
+			handleClientDeconnectionQUIT(_clients[fd]);
+        	return message;
+        }
+        message.append(buffer, bytes_received);
+        if (message.find("\n") != std::string::npos || message.find("\r\n") != std::string::npos)
+            break;
+    }
+    return message;
+}
+
 void Server::handle_client_message(int fd)
 {
-	char buffer[512];
-	memset(buffer, 0, sizeof(buffer));
-	int bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
-	if (bytes_received < 0)
+	//char buffer[512];
+	//memset(buffer, 0, sizeof(buffer));
+	//int bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	//if (bytes_received < 0)
+	//	return ;
+	//else if (bytes_received == 0)
+	//{
+	//	close(fd);
+	//	return ;
+	//}
+	//buffer[bytes_received] = '\0';
+	std::string buffer = read_message(fd);
+	if (buffer.empty())
 		return ;
-	else if (bytes_received == 0)
-	{
-		close(fd);
-		return ;
-	}
-	buffer[bytes_received] = '\0';
 	std::map<int, client *>::iterator it = _clients.find(fd);
+	if (it == _clients.end())
+		return ;
 	Command command;
 	command.execute(buffer, it->second, this);
 }

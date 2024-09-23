@@ -49,6 +49,7 @@ class Server
 	/* + + + + + + + + + + + */
 
 	/* +++ Evenement POLLIN +++ */
+		std::string	read_message(int fd);
 		void handle_client_message(int fd);
 		void client_connection();
 		void deleteAllChannels(std::vector<Channel*>& channels);
