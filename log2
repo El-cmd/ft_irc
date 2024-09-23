@@ -1,28 +1,200 @@
-<< CAP LS 302
-<< JOIN :
->> :@localhost 421  CAP :Unknown command
+>> :@localhost 464  :Password is incorrect
 >> :@localhost 451  :You have not registered
-<< PASS mdp
+<< PASS dsfed
 << NICK eldoc
 << USER eldoc eldoc localhost :Eldoc
->> :eldoc!eldoc@localhost 001 eldoc :Welcome eldoc to the ft_irc network
-<< MODE eldoc +i
->> :eldoc!eldoc@localhost 403 eldoc eldoc :No such channel
-<< PING eldoc
->> :eldoc!eldoc@localhost 421 eldoc PING :Unknown command
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
->> :eldoc!eldoc@localhost  PRIVMSG eldoc :<[32meldoc_[0m> comment  ca va
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 421  Eldoc  :Unknown command
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 421  ldoc :Unknown command
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 464  :Password is incorrect
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc
+>> :@localhost 451  :You have not registered
+<< PASS dsfed
+<< NICK eldoc
+<< USER eldoc eldoc localhost :Eldoc

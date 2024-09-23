@@ -97,7 +97,9 @@ void Command::PrivMsg(const std::vector<std::string> &params, client *sender, Se
 
 void Command::User(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
-    (void) tmp;
+    (void)tmp;
+    if (!sender)
+        return ;
     if (!sender->getAuth())
     {
         sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));
@@ -140,6 +142,7 @@ void Command::Pass(const std::vector<std::string> &params, client *sender, Serve
 
     if (!tmp->auth(params[0]))
     {
+        tmp->handleClientDeconnectionQUIT(sender);
         sender->sendRpl(ERR_PASSWDMISMATCH(sender->getNick()));
         return;
     }
@@ -148,6 +151,8 @@ void Command::Pass(const std::vector<std::string> &params, client *sender, Serve
 
 void Command::Nick(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
+    if (!sender)
+        return ;
     if (!sender->getAuth())
     {
         sender->sendRpl(ERR_NOTREGISTERED(sender->getNick()));

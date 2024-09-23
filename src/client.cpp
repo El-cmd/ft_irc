@@ -139,6 +139,8 @@ void    client::sendchat(const std::string& reply, client* sender)
 
 void    client::write(const std::string &message) const
 {
+    if (message.empty())
+        return ;
     std::string buff = message + "\r\n";
     if (send(_fd, buff.c_str(), buff.size(), 0) < 0)
         throw std::runtime_error("Error while sending message");
