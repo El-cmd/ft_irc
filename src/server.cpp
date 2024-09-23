@@ -260,20 +260,20 @@ std::string Server::read_message(int fd)
 
 void Server::handle_client_message(int fd)
 {
-	char buffer[512];
-	memset(buffer, 0, sizeof(buffer));
-	int bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
-	if (bytes_received < 0)
-		return ;
-	else if (bytes_received == 0)
-	{
-		close(fd);
-		return ;
-	}
-	buffer[bytes_received] = '\0';
-	//std::string buffer = read_message(fd);
-	//if (buffer.empty())
+	//char buffer[512];
+	//memset(buffer, 0, sizeof(buffer));
+	//int bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	//if (bytes_received < 0)
 	//	return ;
+	//else if (bytes_received == 0)
+	//{
+	//	close(fd);
+	//	return ;
+	//}
+	//buffer[bytes_received] = '\0';
+	std::string buffer = read_message(fd);
+	if (buffer.empty())
+		return ;
 	std::map<int, client *>::iterator it = _clients.find(fd);
 	if (it == _clients.end())
 		return ;

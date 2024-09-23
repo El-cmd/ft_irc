@@ -332,6 +332,11 @@ void Command::Kick(const std::vector<std::string> &params, client *sender, Serve
         sender->sendRpl(ERR_NEEDMOREPARAMS(sender->getNick(), "KICK"));
         return ;
     }
+    if (params[0][0] != '#')
+    {
+        sender->sendRpl(ERR_NOSUCHCHANNEL(sender->getNick(), params[0]));
+        return;
+    }
     if (!tmp->channelAlreadyExist(params[0]))
     {
         sender->sendRpl(ERR_NOSUCHCHANNEL(sender->getNick(), params[0]));
@@ -372,6 +377,7 @@ void Command::Kick(const std::vector<std::string> &params, client *sender, Serve
     chan->channelAllMessage(RPL_KICK(sender->getNick(), chan->getName(), clientToKick->getNick(), reason));
     chan->removeClient(clientToKick);
 }
+
 
 void Command::Invite(const std::vector<std::string> &params, client *sender, Server *tmp)
 {
